@@ -2,7 +2,7 @@
 
 A passive women's-safety system **designed on the assumption that its own detector will sometimes be wrong.**
 
-Built for **Code Build 1.0** by **Team ThunderHawks** - Hriddhi Srivastava, Siddhi Srivastava.
+Built for **Code Build 1.0** by **Team ThunderHawks** - Hriddhi Srivastava and Siddhi Srivastava.
 
 ---
 
