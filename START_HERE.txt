@@ -1,0 +1,124 @@
+===========================================================
+  KAVACH AI  —  START HERE
+===========================================================
+
+WHAT IS IN THIS FOLDER
+----------------------
+  kavach_ai_demo.html      The app itself. This IS the whole app.
+                           There is nothing to install on the phone.
+
+  1_RUN_ON_LAPTOP.bat      Double-click this. Easiest option.
+  1_RUN_ON_LAPTOP.py       (what the .bat runs)
+
+  2_RUN_FOR_PHONE.bat      Double-click this to test on your phone.
+  2_RUN_FOR_PHONE.py       (what the .bat runs)
+
+
+===========================================================
+  OPTION 1 — RUN ON THE LAPTOP     (start here)
+===========================================================
+
+  Double-click:   1_RUN_ON_LAPTOP.bat
+
+Your browser opens automatically at:
+
+    http://localhost:8000/kavach_ai_demo.html
+
+The microphone works. The laptop has no motion sensor, so use the
+on-screen "Inject" buttons to drive motion — which is what you should
+do on stage anyway, because a live scream in a noisy hall is not
+reliable.
+
+Keep the black window open. Closing it stops the server.
+
+IMPORTANT: if you ever see an address like  http://[::]:8000
+that is NOT a real web address. It is just Python's way of printing
+"listening on all interfaces". Always type localhost instead.
+
+
+===========================================================
+  OPTION 2 — TEST ON YOUR PHONE
+===========================================================
+
+  Double-click:   2_RUN_FOR_PHONE.bat
+
+It installs one small package the first time, creates its own
+security certificate, and prints an address like:
+
+    https://10.57.151.153:8443
+
+Type THAT into Chrome on your phone. Both devices must be on the
+same Wi-Fi.
+
+The phone will warn you about the certificate. That is expected —
+the certificate is one this script just made for you, so it is not
+signed by a company the phone recognises.
+Tap  Advanced  ->  Proceed anyway.
+
+Then tap "Start monitoring" and allow microphone, motion and
+location when asked.
+
+WHY HTTPS IS NEEDED: browsers block the microphone, motion sensors
+and vibration on any address that is not https:// or localhost.
+Opening the .html file directly by double-clicking it will show the
+page but the sensors will be dead.
+
+
+===========================================================
+  IF THE PHONE CANNOT CONNECT
+===========================================================
+
+Most likely one of these:
+
+1. WINDOWS FIREWALL blocked it.
+   The first run pops up a prompt — tick "Private networks" and
+   click Allow. If you missed it, run the .bat again.
+
+2. CLIENT ISOLATION on the Wi-Fi.
+   College and public networks often stop devices from talking to
+   each other. Your IP starting with 10. suggests this may apply.
+   FIX: turn on your phone's hotspot, connect the laptop to it,
+   and run the script again. A hotspot always allows it.
+
+3. Wrong address. It must start with https:// and end with :8443
+
+
+===========================================================
+  QUICK TEST CHECKLIST
+===========================================================
+
+  Tap "Start monitoring", then check the meters actually move.
+  Talk near the device — the Acoustic bar should rise.
+  If it stays at 0%, you are not on a secure address. See above.
+
+  Then walk the six scenarios:
+
+  A  Argument at home    - inject argument-level = nothing happens
+                           inject extreme = sentinel opens
+  B  Alone at night      - 15 second window; answer with "Unlock phone"
+  C  Known person        - inject argument-level 3 times, wait ~6s
+                           between each, watch the override fire
+  D  Bike, bad roads     - Walking, then Vehicle transit = RIDE MODE
+                           inject road bumps = silence
+                           then Simulate crash = sentinel opens
+  E  Abduction by car    - inject extreme, DO NOT answer, then press
+                           Vehicle transit = ABDUCTION WATCH + live track
+  F  Quiet abduction     - press "Off expected route", or start the
+                           journey and let the ETA run out
+
+  There is a ~5 second cooldown after each event. If you tap Inject
+  repeatedly nothing happens and it looks broken. Pause between them.
+
+  The Guardian tab is inside the same app — there is no backend, so
+  two phones will not sync. Demo it by switching tabs on one device.
+
+
+===========================================================
+  FOR THE COMPETITION
+===========================================================
+
+Present from the laptop through the projector. It is more reliable
+than phone Wi-Fi, and the judges can actually read the meters, the
+threshold marker and the guardian view. Keep the phone as a backup.
+
+Rehearse the six-scenario run twice. It takes about six minutes.

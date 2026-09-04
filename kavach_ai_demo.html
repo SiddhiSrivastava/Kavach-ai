@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Kavach AI — Safety Ladder v4</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#121b2e; --panel2:#17233a; --line:#253150;
+    --text:#e8edf7; --muted:#93a1c2;
+    --teal:#3fb0a8; --blue:#4f8fd6; --gold:#d4a53d; --red:#d9534f;
+    --green:#4caf7d; --grey:#6b7794; --plum:#c25a95; --orange:#e07a45;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-tap-highlight-color:transparent}
+  .wrap{max-width:800px;margin:0 auto;padding:16px 14px 60px}
+  header{text-align:center;padding:12px 0 4px}
+  header h1{font-size:22px;margin:0 0 3px}
+  header h1 span{color:var(--teal)}
+  header p{margin:0;color:var(--muted);font-size:12.5px}
+
+  .tabs{display:flex;gap:5px;margin:14px 0 12px;background:var(--panel);padding:4px;border-radius:12px;border:1px solid var(--line)}
+  .tab{flex:1;text-align:center;padding:9px 4px;border-radius:9px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none;position:relative}
+  .tab.active{background:var(--panel2);color:var(--text);font-weight:600}
+  .tab .dot{position:absolute;top:4px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);display:none}
+  .tab .dot.on{display:block}
+  .view{display:none}.view.active{display:block}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px}
+  .card h2{font-size:14.5px;margin:0 0 10px}
+  .card h2 small{color:var(--muted);font-weight:400;font-size:12px}
+  .layer-tag{display:inline-block;font-size:10px;letter-spacing:.6px;font-weight:700;padding:3px 8px;border-radius:5px;margin-bottom:8px}
+  .lt1{background:rgba(63,176,168,.16);color:var(--teal)}
+  .lt2{background:rgba(79,143,214,.16);color:var(--blue)}
+  .lt3{background:rgba(212,165,61,.16);color:var(--gold)}
+  .lt4{background:rgba(76,175,125,.16);color:var(--green)}
+  .ltm{background:rgba(194,90,149,.16);color:var(--plum)}
+  .ltx{background:rgba(224,122,69,.16);color:var(--orange)}
+
+  .btn{display:block;width:100%;text-align:center;padding:11px;border-radius:11px;border:none;
+    font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;font-family:inherit}
+  .btn-primary{background:linear-gradient(135deg,var(--blue),var(--teal));color:#04121a}
+  .btn-outline{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn-danger{background:var(--red);color:#fff}
+  .btn-amber{background:var(--gold);color:#1a1200}
+  .btn-plum{background:var(--plum);color:#1a0512}
+  .btn-green{background:var(--green);color:#04121a}
+  .btn-orange{background:var(--orange);color:#1a0a02}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-row{display:flex;gap:7px}.btn-row .btn{margin-bottom:0}
+
+  .scen{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+  .scen button{text-align:left;padding:10px 11px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text);font-size:11.5px;cursor:pointer;line-height:1.35;font-family:inherit}
+  .scen button.active{border-color:var(--teal);background:rgba(63,176,168,.12)}
+  .scen button b{display:block;font-size:12px;margin-bottom:2px}
+  .scen button span{color:var(--muted);font-size:10.3px}
+
+  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  .tg{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);
+    border-radius:9px;padding:9px 11px;font-size:12.3px;cursor:pointer;user-select:none}
+  .tg .v{font-weight:700;font-size:12px}
+  .tg .v.on{color:var(--teal)}.tg .v.off{color:var(--muted)}
+
+  .vigil{display:flex;justify-content:space-between;align-items:center;margin-top:11px;
+    background:var(--panel2);border-radius:10px;padding:11px 13px}
+  .vigil .lbl{font-size:11.5px;color:var(--muted)}
+  .vigil .val{font-size:16px;font-weight:800}
+  .v-high{color:var(--grey)}.v-low{color:var(--green)}.v-normal{color:var(--blue)}
+  .v-height{color:var(--gold)}.v-armed{color:var(--red)}
+  .capnote{font-size:10.8px;color:var(--orange);margin-top:5px;text-align:right}
+
+  .modebar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;
+    margin-top:9px;font-size:12.3px;background:var(--panel2)}
+  .modebar.ride{background:rgba(79,143,214,.12);border:1px solid rgba(79,143,214,.4)}
+  .modebar.watch{background:rgba(217,83,79,.12);border:1px solid rgba(217,83,79,.5)}
+  .modebar b{font-size:12.5px}
+  .modebar .sub{color:var(--muted);font-size:10.8px;margin-top:2px}
+
+  .devrow{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;
+    background:var(--panel2);border-radius:9px;margin-top:7px;font-size:12.3px;cursor:pointer}
+  .chip{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px}
+  .chip-sup{background:rgba(212,165,61,.2);color:var(--gold)}
+  .chip-gua{background:rgba(76,175,125,.18);color:var(--green)}
+  .devnone{font-size:12px;color:var(--muted);padding:8px 2px}
+
+  .ovr{display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    padding:9px 12px;border-radius:9px;background:rgba(224,122,69,.1);border:1px solid rgba(224,122,69,.35);font-size:12px}
+  .ovr b{color:var(--orange)}
+
+  .meter-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin:9px 0 4px}
+  .meter{height:10px;border-radius:6px;background:#1c2740;overflow:hidden;position:relative}
+  .meter>div{height:100%;border-radius:6px;transition:width .12s linear}
+  .meter.audio>div{background:linear-gradient(90deg,var(--blue),var(--teal))}
+  .meter.motion>div{background:linear-gradient(90deg,var(--gold),#f0c869)}
+  .meter.fusion>div{background:linear-gradient(90deg,var(--green),var(--red))}
+  .thresh-line{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.9;z-index:4}
+
+  .log{font-size:11.4px;color:var(--muted);background:#0e1626;border-radius:10px;padding:9px;
+    max-height:165px;overflow-y:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .log div{padding:2px 0;border-bottom:1px solid #1a2338}
+  .log .ok{color:var(--green)}.log .warn{color:var(--gold)}.log .bad{color:#ff8b87}
+  .log .orange{color:var(--orange)}.log .plum{color:var(--plum)}
+
+  .sentinel{border:1px solid var(--gold);background:rgba(212,165,61,.07)}
+  .sentinel h2{color:var(--gold)}
+  .count{font-size:36px;font-weight:800;color:var(--gold);text-align:center;line-height:1.1}
+  .winnote{text-align:center;font-size:11px;color:var(--muted);margin-top:2px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:210px;margin:11px auto 6px}
+  .cell{aspect-ratio:1;border-radius:12px;background:var(--panel2);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .cell i{width:12px;height:12px;border-radius:50%;background:#3d4a68;display:block;transition:.12s}
+  .cell.hit i{background:var(--teal);transform:scale(1.5)}
+  .cell.hint{border-color:rgba(63,176,168,.45)}
+  .pol{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+  .pol button{padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);
+    color:var(--text);font-size:11.5px;cursor:pointer;font-family:inherit;line-height:1.3}
+
+  .safe-banner{border:1px solid var(--green);background:rgba(76,175,125,.09)}
+  .safe-banner h2{color:var(--green)}
+  .ovr-banner{border:1px solid var(--orange);background:rgba(224,122,69,.09)}
+  .ovr-banner h2{color:var(--orange)}
+
+  .alert-card{border:1px solid var(--red);border-radius:12px;padding:13px;margin-bottom:11px;background:rgba(217,83,79,.06)}
+  .alert-card.soft{border-color:var(--gold);background:rgba(212,165,61,.07)}
+  .alert-card.confirmed{background:rgba(217,83,79,.16)}
+  .alert-card.dismissed,.alert-card.recalled{border-color:var(--line);background:var(--panel2);opacity:.75}
+  .alert-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+  .alert-head b{font-size:13.5px}
+  .pill{font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:999px;white-space:nowrap}
+  .pill-soft{background:rgba(212,165,61,.22);color:var(--gold)}
+  .pill-full{background:rgba(217,83,79,.25);color:#ff8b87}
+  .pill-duress{background:rgba(217,83,79,.3);color:#ff8b87}
+  .pill-manual{background:rgba(194,90,149,.25);color:var(--plum)}
+  .kv{font-size:12px;color:var(--muted);padding:3px 0}
+  .kv b{color:var(--text);font-weight:600}
+  .hint-chip{display:inline-block;font-size:11px;padding:4px 9px;border-radius:7px;margin-top:6px;
+    background:rgba(79,143,214,.14);color:var(--blue)}
+  .ctx-chip{display:block;font-size:11.3px;padding:7px 9px;border-radius:8px;margin-top:7px;
+    background:rgba(76,175,125,.1);color:var(--green);line-height:1.4}
+  .promote{font-size:11.3px;color:var(--gold);margin-top:7px}
+  .trail{margin-top:8px;background:#0e1626;border-radius:9px;padding:8px}
+  .trail svg{width:100%;height:80px;display:block}
+  .trail .lbl{font-size:10.8px;color:var(--muted);margin-bottom:4px}
+
+  iframe.map{width:100%;height:165px;border:0;border-radius:10px;margin-top:8px;filter:invert(.92) hue-rotate(180deg)}
+  audio{width:100%;margin-top:8px}
+
+  .note{font-size:11.8px;color:var(--muted);line-height:1.55}
+  .note b{color:var(--text)}
+  .arch-box{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:7px;font-size:12.4px;line-height:1.45}
+  .arch-box b{color:var(--teal)}
+  .arch-box.man b{color:var(--plum)}
+  .arch-box.warn b{color:var(--orange)}
+  .arrow-down{text-align:center;color:var(--muted);font-size:15px;margin:1px 0}
+  code{background:#0e1626;padding:1px 5px;border-radius:4px;font-size:11.5px}
+  .empty{text-align:center;color:var(--muted);font-size:12.5px;padding:24px 10px}
+  .quote{border-left:3px solid var(--teal);padding:6px 0 6px 12px;margin:10px 0;font-size:13px;line-height:1.5}
+  .quote.warn{border-left-color:var(--orange)}
+  .quote.red{border-left-color:var(--red)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Kavach <span>AI</span></h1>
+    <p>Four-Layer Safety Ladder · v4 — Nari Kavach Yantrika 1.0</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-view="demo">Device</div>
+    <div class="tab" data-view="guardian">Guardian<span class="dot" id="gDot"></span></div>
+    <div class="tab" data-view="how">Thesis</div>
+    <div class="tab" data-view="arch">Architecture</div>
+  </div>
+
+  <!-- ================= DEVICE ================= -->
+  <div class="view active" id="view-demo">
+
+    <div class="card">
+      <h2>Demo scenarios</h2>
+      <div class="scen">
+        <button id="scenA" onclick="setScenario('A')"><b>A · Argument at home</b><span>Safe zone · day · 2 family devices</span></button>
+        <button id="scenB" onclick="setScenario('B')"><b>B · Alone at night</b><span>Unfamiliar · 11 PM · no devices</span></button>
+        <button id="scenC" onclick="setScenario('C')"><b>C · Known person</b><span>The repeat-override case</span></button>
+        <button id="scenD" onclick="setScenario('D')"><b>D · Bike, bad roads</b><span>Clean transit → ride mode</span></button>
+        <button id="scenE" onclick="setScenario('E')"><b>E · Abduction by car</b><span>Dirty transit → abduction watch</span></button>
+        <button id="scenF" onclick="setScenario('F')"><b>F · Quiet abduction</b><span>No violence → behaviour only</span></button>
+      </div>
+      <p class="note" id="scenHint">Pick a scenario, then start monitoring. Each one drives the same sensors to a different outcome.</p>
+    </div>
+
+    <div class="card">
+      <span class="layer-tag ltm">MANUAL OVERRIDE</span>
+      <h2>Deliberate call for help</h2>
+      <button class="btn btn-plum" onclick="manualTrigger()">Volume-button sequence (pocket-operable)</button>
+      <p class="note">No screen, no visible action — operable with the phone still in a pocket. <b>Bypasses every layer, always</b>, in any mode or context.</p>
+    </div>
+
+    <div class="card">
+      <span class="layer-tag lt1">LAYER 1 · CONTEXT ENGINE</span>
+      <h2>Where you are, when, and who's around</h2>
+      <div class="toggles">
+        <div class="tg" onclick="toggle('safeZone')"><span>Safe zone</span><span class="v off" id="tgSafe">NO</span></div>
+        <div class="tg" onclick="toggle('night')"><span>Night hours</span><span class="v off" id="tgNight">NO</span></div>
+        <div class="tg" onclick="toggle('familiar')"><span>Familiar route</span><span class="v off" id="tgFam">NO</span></div>
+        <div class="tg" onclick="cycleDevices()"><span>Devices nearby</span><span class="v off" id="tgDev">0</span></div>
+      </div>
+      <div id="devList"></div>
+
+      <div class="vigil">
+        <div><div class="lbl">Vigilance level</div><div class="val v-normal" id="vigilVal">NORMAL</div></div>
+        <div style="text-align:right"><div class="lbl">Trigger threshold</div><div class="val" id="threshVal">60</div></div>
+      </div>
+      <div class="capnote" id="capNote" style="display:none"></div>
+      <div class="ovr"><span>Suppressed events in window</span><span><b id="ovrCount">0</b> / 3 → override</span></div>
+    </div>
+
+    <div class="card">
+      <span class="layer-tag ltx">MOVEMENT STATE</span>
+      <h2>How the journey began <small>— decides ride mode vs abduction watch</small></h2>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="setMovement('walking')">Walking</button>
+        <button class="btn btn-outline" onclick="setMovement('transit')">Vehicle transit</button>
+        <button class="btn btn-outline" onclick="setMovement('stationary')">Stop</button>
+      </div>
+      <div class="modebar" id="modeBar">
+        <div><b id="modeName">NORMAL</b><div class="sub" id="modeSub">stationary</div></div>
+        <div style="text-align:right"><b id="speedVal">0 km/h</b><div class="sub">GPS speed</div></div>
+      </div>
+      <button class="btn btn-orange" id="btnCrash" style="margin-top:9px;display:none" onclick="simulateCrash()">Simulate crash (deceleration + stillness)</button>
+      <p class="note" style="margin-top:8px">Transit entered <b>after</b> a distress event or an unanswered check is classified <b>dirty</b> → abduction watch. Entered after normal walking with nothing outstanding → <b>clean</b> → ride mode.</p>
+    </div>
+
+    <div class="card">
+      <span class="layer-tag ltx">JOURNEY & ROUTE</span>
+      <h2>The only signals a quiet abduction leaves</h2>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="startJourney()">Start journey (Home, ETA 20 s)</button>
+        <button class="btn btn-outline" onclick="arriveJourney()">Arrived</button>
+      </div>
+      <button class="btn btn-outline" style="margin-top:8px" onclick="routeDeviation()">Simulate: off expected route</button>
+      <div class="modebar" id="journeyBar" style="margin-top:9px">
+        <div><b id="journeyName">No active journey</b><div class="sub" id="journeySub">no destination set</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="layer-tag lt2">LAYER 2 · DETECTION</span>
+      <h2>Dual-signal fusion <small>— outputs a score, never an alert</small></h2>
+      <button class="btn btn-primary" id="btnStart" onclick="startMonitoring()">Start monitoring (mic + motion + location)</button>
+      <button class="btn btn-outline" id="btnStop" onclick="stopMonitoring()" disabled>Stop monitoring</button>
+
+      <div id="metersWrap" style="display:none">
+        <div class="meter-label"><span>Acoustic signal</span><span id="audioVal">0%</span></div>
+        <div class="meter audio"><div id="audioBar" style="width:0%"></div></div>
+        <div class="meter-label"><span>Motion signal <span id="motionDisc"></span></span><span id="motionVal">0%</span></div>
+        <div class="meter motion"><div id="motionBar" style="width:0%"></div></div>
+        <div class="meter-label"><span>Fusion confidence</span><span id="fusionVal">0%</span></div>
+        <div class="meter fusion"><div id="fusionBar" style="width:0%"></div><div class="thresh-line" id="threshLine" style="left:60%"></div></div>
+
+        <button class="btn btn-amber" style="margin-top:10px" onclick="inject('argument')">Inject argument-level (~70%)</button>
+        <button class="btn btn-danger" onclick="inject('extreme')">Inject extreme (~95%)</button>
+        <button class="btn btn-outline" onclick="inject('animal')">Inject dog-chase (~85%)</button>
+        <button class="btn btn-outline" onclick="inject('road')">Inject road bumps + noise (~85%)</button>
+        <button class="btn btn-outline" onclick="forceSentinel()">Skip to Sentinel Check (stage fallback)</button>
+        <div class="log" id="logBox" style="margin-top:11px"></div>
+      </div>
+    </div>
+
+    <div class="card sentinel" id="sentinelCard" style="display:none">
+      <span class="layer-tag lt3">LAYER 3 · SENTINEL CHECK</span>
+      <h2 id="sentTitle">Are you okay?</h2>
+      <p class="note" style="text-align:center">Silent vibration. <b>Nothing has been sent to anyone yet.</b></p>
+      <div class="count" id="sentCount">15</div>
+      <div class="winnote" id="winNote"></div>
+      <div class="grid3" id="tapGrid"></div>
+      <p class="note" style="text-align:center" id="hintLine">Tap your three-point pattern.</p>
+      <p class="note" style="text-align:center;margin-top:8px"><b>— or answer any other way —</b></p>
+      <div class="pol">
+        <button onclick="proofOfLife('unlock')">Unlock phone<br><span style="color:var(--muted)">Face / fingerprint</span></button>
+        <button onclick="proofOfLife('voice')">Say safe word<br><span style="color:var(--muted)">works while riding</span></button>
+        <button onclick="proofOfLife('shake')">Shake phone<br><span style="color:var(--muted)">works in pocket</span></button>
+        <button onclick="proofOfLife('volume')">Volume sequence<br><span style="color:var(--muted)">works in bag</span></button>
+      </div>
+      <button class="btn btn-outline" onclick="toggleHint()" id="hintBtn" style="margin-top:10px">Show patterns (demo aid)</button>
+    </div>
+
+    <div class="card safe-banner" id="safeCard" style="display:none">
+      <h2 id="safeTitle">Event discarded</h2>
+      <p class="note" id="safeText"></p>
+      <button class="btn btn-green" id="recallBtn" style="display:none;margin-top:10px" onclick="recallAlert()">I'm fine — recall that alert</button>
+    </div>
+  </div>
+
+  <!-- ================= GUARDIAN ================= -->
+  <div class="view" id="view-guardian">
+    <div class="card">
+      <span class="layer-tag lt4">LAYER 4 · GUARDIAN VERIFICATION</span>
+      <h2>What your trusted contact sees</h2>
+      <p class="note">Alerts arrive in two tiers. A <b>soft notice</b> says only "couldn't confirm she's okay" and carries the context that explains it. A <b>full alert</b> is the real thing. Either way a human decides before authorities are involved.</p>
+      <button class="btn btn-outline" style="margin-top:9px" onclick="phoneWentDark()">Simulate: her phone powers off</button>
+    </div>
+    <div id="alertsWrap"></div>
+  </div>
+
+  <!-- ================= THESIS ================= -->
+  <div class="view" id="view-how">
+    <div class="card">
+      <h2>The honest problem with "AI detects distress"</h2>
+      <p class="note">No classifier can reliably tell an angry scream at your sibling from a terrified scream at an attacker. Audio and motion do not carry that information.</p>
+      <div class="quote">So we stopped trying to build a perfect detector, and built a system that stays safe when the detector is wrong.</div>
+    </div>
+
+    <div class="card">
+      <h2>Context can be wrong too — five safeguards</h2>
+      <p class="note"><b>1 · Threshold capped at 85.</b> Suppression raises the bar; it never closes the door.</p>
+      <p class="note" style="margin-top:7px"><b>2 · One person is not a crowd.</b> A single suppression-eligible device counts far less than several.</p>
+      <p class="note" style="margin-top:7px"><b>3 · Suppression is opt-in per contact.</b> Guardian-eligible ≠ suppression-eligible.</p>
+      <p class="note" style="margin-top:7px"><b>4 · Repeat-suppression override.</b> Three suppressed events in the window discard suppression entirely — the pattern is the signal.</p>
+      <p class="note" style="margin-top:7px"><b>5 · Manual trigger bypasses everything</b>, pocket-operable, in any mode.</p>
+    </div>
+
+    <div class="card">
+      <h2>Answering is not one gesture</h2>
+      <p class="note">The premise is "inability to act signals danger" — so it is wrong to define acting as one narrow tap. Unlocking your phone normally proves you are conscious, free and in control of your device. So do a spoken safe word, a shake, or a volume sequence.</p>
+      <div class="quote">Five channels make the false alarms disappear <b>and</b> make the real signal stronger: silence across all five is far better evidence of genuine inability than one missed tap.</div>
+      <p class="note">The countdown also scales with context — 15 s when pre-armed and seconds matter, up to 60 s at home where they do not, and longer still while riding.</p>
+    </div>
+
+    <div class="card">
+      <h2>Riding versus being taken</h2>
+      <p class="note">Bad roads produce exactly the signature the detector looks for: hard motion plus loud ambient noise. But riding is <b>sustained, rhythmic, and travelling at 30+ km/h in a consistent direction</b> — nothing like a few seconds of chaos. So transit gets its own mode where motion stops counting and crash detection takes over.</p>
+      <div class="quote warn">The trap: an abduction is also a vehicle journey. So ride mode has to be <b>earned</b>, not granted.</div>
+      <p class="note">The system asks not "is this a vehicle?" but <b>"how did this journey begin?"</b> Walking, then driving, nothing outstanding → clean → ride mode. A distress event or an unanswered check, then driving → dirty → <b>abduction watch</b>: threshold to the floor, guardians already alerted, and location <b>streaming as a live trail</b> rather than a single pin. In an abduction the most valuable output is not an alarm — it is a track police can follow.</p>
+    </div>
+
+    <div class="card">
+      <h2>Where the system genuinely ends</h2>
+      <p class="note">A <b>quiet abduction</b> — no scream, no struggle, phone kept, victim walked away under threat — leaves the detector nothing to detect. We do not claim otherwise.</p>
+      <div class="quote red">What remains: the discreet manual trigger, and behavioural evidence — off her usual route, at an odd hour, or a journey whose ETA passed without arrival. Those trigger a proof-of-life check. Silence then escalates.</div>
+      <p class="note">Likewise, if the attacker destroys the phone, no software fixes that — a continuous trail up to that moment is the honest best. That is the real argument for a companion wearable, and a roadmap item rather than a hidden gap.</p>
+    </div>
+
+    <div class="card">
+      <h2>Running this on stage</h2>
+      <p class="note"><b>Microphone, motion and vibration only work on a secure origin</b> — that means <code>https://</code> or <code>localhost</code>. Opening this over your laptop's LAN address (<code>http://192.168.x.x:8000</code>) will silently block the mic and motion sensors. Do not rely on it.</p>
+      <p class="note" style="margin-top:8px"><b>Best — real phone, full sensors:</b> go to <code>app.netlify.com/drop</code>, drag this single file in, and you get an HTTPS link in about thirty seconds. Open that on your phone. No account or build step needed.</p>
+      <p class="note" style="margin-top:8px"><b>Alternative:</b> <code>cloudflared tunnel --url http://localhost:8000</code> wraps a local server in a public HTTPS URL, so you can keep editing the file live.</p>
+      <p class="note" style="margin-top:8px"><b>Fallback if the venue Wi-Fi fails:</b> run <code>python3 -m http.server 8000</code> and open <code>http://localhost:8000</code> <b>on the laptop itself</b> — localhost counts as secure, so the mic works. Laptops have no accelerometer, so drive motion with the inject buttons. This also projects better.</p>
+      <p class="note" style="margin-top:8px"><b>Use an Android phone if you can.</b> iOS Safari does not support the vibration API, so the silent buzz will not fire there — the on-screen countdown still does everything else.</p>
+      <p class="note" style="margin-top:8px"><b>The Guardian tab is part of this same app</b> — there is no backend, so two phones will not sync. Demo it by switching tabs on one device, ideally mirrored to the projector.</p>
+    </div>
+  </div>
+
+  <!-- ================= ARCHITECTURE ================= -->
+  <div class="view" id="view-arch">
+    <div class="card">
+      <h2>The ladder</h2>
+      <div class="arch-box">Sensors: <b>mic</b> · <b>accelerometer</b> · <b>GPS speed &amp; geofence</b> · <b>BLE proximity</b> · <b>activity recognition</b></div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box"><b>Layer 1 — Context Engine.</b> Place, time, route, opt-in nearby devices, movement state → dynamic threshold, <b>capped at 85</b>.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box warn"><b>Transit entry classifier.</b> Clean (walking → driving, nothing outstanding) → <b>ride mode</b>: motion discounted, crash detection on. Dirty (event or unanswered check → driving) → <b>abduction watch</b>: threshold to floor, live location trail, guardians alerted.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box"><b>Layer 2 — Detection.</b> Dual-signal fusion evaluated on the event's <b>peak over an 800 ms window</b>, not the rising edge. Outputs a score only.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box"><b>Gate.</b> Below threshold → suppressed. Three suppressions in the window → override and open the sentinel anyway.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box"><b>Layer 3 — Sentinel Check.</b> Context-scaled window. Five proof-of-life channels: tap pattern, phone unlock, safe word, shake, volume sequence. Duress pattern → fake cancel + silent escalation.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box"><b>Layer 4 — Guardian Verification.</b> <b>Soft notice</b> ("couldn't confirm") auto-promotes to <b>full alert</b> if unresolved. Location, audio, classifier hint, context line, live trail. Human confirms before authorities. Recall window cancels within seconds.</div>
+      <div class="arrow-down">↓</div>
+      <div class="arch-box man"><b>Manual trigger</b> bypasses Layers 1–3 entirely, in any mode.</div>
+    </div>
+    <div class="card">
+      <h2>Real vs. mocked</h2>
+      <p class="note"><b>Real:</b> microphone amplitude sensing, device-motion sensing, GPS, the entire state machine — context scoring and cap, repeat-override, transit entry classification, ride mode motion discounting, abduction watch, crash path, all five proof-of-life channels, context-scaled windows, soft→full promotion, recall, journey watch, route anomaly, live trail accumulation, audio capture, and the guardian confirm/dismiss flow.</p>
+      <p class="note" style="margin-top:8px"><b>Simulated by buttons:</b> BLE proximity, GPS speed and activity recognition (production uses Android ActivityRecognition / iOS CMMotionActivity), the audio event classifier's label, the guardian roster, and phone power-off. Timings are shortened for stage: override window 3 min (spec 20), journey ETA 20 s, soft→full promotion 20 s (spec 60). Say this to judges — it reads as engineering honesty.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  document.querySelectorAll(".tab").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+      tab.classList.add("active");
+      $("view-"+tab.dataset.view).classList.add("active");
+      if(tab.dataset.view==="guardian") $("gDot").classList.remove("on");
+    });
+  });
+
+  // ---------------- config ----------------
+  var CAP=85, FLOOR=30, OVERRIDE_COUNT=3, OVERRIDE_WINDOW=180000;
+  var EVAL_WINDOW=800, EVENT_FLOOR=55;
+  var DIRTY_LOOKBACK=180000, WALK_LOOKBACK=120000;
+  var PROMOTE_MS=20000;          // spec 60s
+  var JOURNEY_ETA=20000;         // demo
+  var TRAIL_INTERVAL=3000;
+  var SAFE_PATTERN=[0,4,8], DURESS_PATTERN=[2,4,6];
+  var POOL=["Priya (sister)","Mom","Roommate"];
+
+  // ---------------- state ----------------
+  var ctx={safeZone:false,night:false,familiar:false,devices:[]};
+  var movement="stationary", mode="normal", transitEntry=null, speed=0;
+  var walkingSeenAt=null, lastEventAt=null, lastUnansweredAt=null;
+  var routeAnomaly=false, journey=null, journeyTimer=null;
+  var monitoring=false, audioCtx=null, analyser=null, micStream=null, dataArray=null;
+  var audioLevel=0, motionLevel=0, fusionLevel=0;
+  var lastAccel={x:0,y:0,z:0}, audioHigh=null, motionHigh=null;
+  var simAudio=0, simMotion=0, rafId=null, pendingType="distress";
+  var evalStart=null, evalPeak=0, cooldownUntil=0, suppressed=[];
+  var sentinelActive=false, sentTimer=null, sentLeft=0, tapSeq=[], sentType="distress", sentReason="";
+  var lastCoords=null, mediaRecorder=null, chunks=[], alerts=[], alertSeq=0;
+  var hintOn=false, trailTimer=null, promoteTimers={}, lastAlertId=null;
+
+  function log(m,c){
+    var b=$("logBox"); if(!b) return;
+    var d=document.createElement("div");
+    if(c) d.className=c;
+    d.textContent="["+new Date().toLocaleTimeString()+"] "+m;
+    b.prepend(d);
+    while(b.childNodes.length>50) b.removeChild(b.lastChild);
+  }
+
+  // ---------------- Layer 1 ----------------
+  function supDevices(){ return ctx.devices.filter(function(d){return d.suppress;}).length; }
+  function rawThreshold(){
+    var t=50;
+    if(ctx.safeZone) t+=20; else t-=8;
+    var n=supDevices();
+    if(n===1) t+=6; else if(n>=2) t+=n*12;
+    if(ctx.familiar) t+=6;
+    if(ctx.night) t-=12; else t+=8;
+    if(n===0 && !ctx.safeZone && ctx.night) t-=10;
+    if(mode==="ride") t+=25;
+    if(mode==="abduction_watch") t=FLOOR;
+    if(routeAnomaly) t-=15;
+    return t;
+  }
+  function threshold(){
+    if(mode==="abduction_watch") return FLOOR;
+    return Math.max(FLOOR, Math.min(CAP, rawThreshold()));
+  }
+  function vigilance(){
+    var t=threshold();
+    if(mode==="abduction_watch") return ["ABDUCTION WATCH","v-armed"];
+    if(t>=CAP) return ["HIGH BAR","v-high"];
+    if(t>=65) return ["LOW","v-low"];
+    if(t>=50) return ["NORMAL","v-normal"];
+    if(t>=38) return ["HEIGHTENED","v-height"];
+    return ["PRE-ARMED","v-armed"];
+  }
+  function sentinelWindow(){
+    if(mode==="ride") return 45;
+    var t=threshold();
+    if(t>=CAP) return 60;
+    if(t>=65) return 45;
+    if(t>=50) return 30;
+    if(t>=38) return 20;
+    return 15;
+  }
+  function pruneSup(){
+    var cut=Date.now()-OVERRIDE_WINDOW;
+    suppressed=suppressed.filter(function(t){return t>cut;});
+  }
+
+  function renderContext(){
+    $("tgSafe").textContent=ctx.safeZone?"YES":"NO"; $("tgSafe").className="v "+(ctx.safeZone?"on":"off");
+    $("tgNight").textContent=ctx.night?"YES":"NO"; $("tgNight").className="v "+(ctx.night?"on":"off");
+    $("tgFam").textContent=ctx.familiar?"YES":"NO"; $("tgFam").className="v "+(ctx.familiar?"on":"off");
+    $("tgDev").textContent=String(ctx.devices.length); $("tgDev").className="v "+(ctx.devices.length?"on":"off");
+
+    var h="";
+    if(!ctx.devices.length) h='<div class="devnone">No trusted devices detected nearby.</div>';
+    else ctx.devices.forEach(function(d,i){
+      h+='<div class="devrow" onclick="toggleDevice('+i+')"><span>'+d.name+'</span>'+
+         (d.suppress?'<span class="chip chip-sup">SUPPRESSES</span>':'<span class="chip chip-gua">GUARDIAN ONLY</span>')+'</div>';
+    });
+    $("devList").innerHTML=h;
+
+    var raw=rawThreshold(), eff=threshold(), v=vigilance();
+    $("vigilVal").textContent=v[0]; $("vigilVal").className="val "+v[1];
+    $("threshVal").textContent=String(eff);
+    $("threshLine").style.left=eff+"%";
+    if(raw>CAP && mode!=="abduction_watch"){
+      $("capNote").style.display="block";
+      $("capNote").textContent="capped from "+raw+" — extreme events still get through";
+    } else $("capNote").style.display="none";
+    pruneSup(); $("ovrCount").textContent=String(suppressed.length);
+
+    var mb=$("modeBar");
+    mb.className="modebar"+(mode==="ride"?" ride":(mode==="abduction_watch"?" watch":""));
+    $("modeName").textContent = mode==="ride"?"RIDE MODE":(mode==="abduction_watch"?"ABDUCTION WATCH":"NORMAL");
+    var sub = movement;
+    if(mode==="ride") sub="clean entry · motion discounted · crash detection on";
+    if(mode==="abduction_watch") sub="dirty entry · threshold at floor · streaming location";
+    $("modeSub").textContent=sub;
+    $("speedVal").textContent=speed+" km/h";
+    $("btnCrash").style.display = mode==="ride" ? "block":"none";
+    $("motionDisc").textContent = mode==="ride" ? "(discounted ×0.2)" : "";
+  }
+
+  window.toggle=function(k){ ctx[k]=!ctx[k]; clearScen(); renderContext(); };
+  window.cycleDevices=function(){
+    var n=(ctx.devices.length+1)%4;
+    ctx.devices=POOL.slice(0,n).map(function(nm){return {name:nm,suppress:false};});
+    clearScen(); renderContext();
+  };
+  window.toggleDevice=function(i){
+    if(ctx.devices[i]){ ctx.devices[i].suppress=!ctx.devices[i].suppress; clearScen(); renderContext(); }
+  };
+  function clearScen(){ ["scenA","scenB","scenC","scenD","scenE","scenF"].forEach(function(id){ $(id).classList.remove("active"); }); }
+
+  // ---------------- movement / transit entry ----------------
+  window.setMovement=function(m){
+    var now=Date.now();
+    if(m==="walking"){
+      movement="walking"; walkingSeenAt=now; speed=5;
+      if(mode!=="abduction_watch"){ mode="normal"; stopTrail(); }
+      log("Activity recognition: WALKING.","ok");
+    } else if(m==="transit"){
+      movement="transit"; speed=34;
+      transitEntry=classifyEntry();
+      if(transitEntry==="dirty"){
+        mode="abduction_watch";
+        log("TRANSIT entered DIRTY — a distress event or unanswered check preceded it.","bad");
+        log("→ ABDUCTION WATCH: threshold to floor, guardians alerted, streaming location.","bad");
+        escalate("abduction","distress","full");
+        startTrail();
+      } else {
+        mode="ride";
+        log("TRANSIT entered CLEAN ("+transitEntry+") — walking gait before, nothing outstanding.","ok");
+        log("→ RIDE MODE: motion discounted, crash detection active, window extended.","ok");
+      }
+    } else {
+      movement="stationary"; speed=0;
+      if(mode!=="abduction_watch"){ mode="normal"; }
+      log("Movement stopped.");
+    }
+    renderContext();
+  };
+  function classifyEntry(){
+    var now=Date.now();
+    if(lastUnansweredAt && now-lastUnansweredAt<DIRTY_LOOKBACK) return "dirty";
+    if(lastEventAt && now-lastEventAt<DIRTY_LOOKBACK) return "dirty";
+    if(walkingSeenAt && now-walkingSeenAt<WALK_LOOKBACK) return "clean";
+    return "clean-unverified";
+  }
+
+  window.simulateCrash=function(){
+    if(mode!=="ride"){ log("Crash detection only runs in ride mode.","warn"); return; }
+    log("CRASH SIGNATURE — deceleration spike then stillness. Not a road bump.","bad");
+    speed=0; movement="stationary"; renderContext();
+    openSentinel("crash","Crash detected");
+  };
+
+  // ---------------- journey / route ----------------
+  window.startJourney=function(){
+    journey={dest:"Home", due:Date.now()+JOURNEY_ETA};
+    $("journeyName").textContent="Journey active → Home";
+    $("journeySub").textContent="ETA in 20 s (demo timing)";
+    log("Journey watch armed — Home, ETA 20 s.","ok");
+    if(journeyTimer) clearTimeout(journeyTimer);
+    journeyTimer=setTimeout(function(){
+      if(journey){
+        log("ETA PASSED without arrival — journey watch triggering proof-of-life check.","orange");
+        $("journeyName").textContent="ETA missed";
+        $("journeySub").textContent="no arrival, no phone interaction";
+        openSentinel("behaviour","ETA missed — are you okay?");
+      }
+    }, JOURNEY_ETA);
+  };
+  window.arriveJourney=function(){
+    if(journeyTimer) clearTimeout(journeyTimer);
+    journey=null;
+    $("journeyName").textContent="Arrived safely";
+    $("journeySub").textContent="journey watch cleared";
+    log("Arrival confirmed — journey watch cleared.","ok");
+  };
+  window.routeDeviation=function(){
+    routeAnomaly=true; renderContext();
+    log("ROUTE ANOMALY — moving away from expected route at an unusual hour.","orange");
+    setTimeout(function(){
+      if(!sentinelActive) openSentinel("behaviour","You seem off your usual route");
+    }, 1200);
+  };
+
+  // ---------------- Layer 2 ----------------
+  window.startMonitoring=async function(){
+    $("btnStart").disabled=true;
+    try{
+      micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+      audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      var s=audioCtx.createMediaStreamSource(micStream);
+      analyser=audioCtx.createAnalyser(); analyser.fftSize=1024;
+      dataArray=new Uint8Array(analyser.frequencyBinCount); s.connect(analyser);
+      log("Microphone connected.","ok");
+      try{
+        mediaRecorder=new MediaRecorder(micStream);
+        mediaRecorder.ondataavailable=function(e){
+          if(e.data&&e.data.size>0){ chunks.push(e.data); if(chunks.length>10) chunks.shift(); }
+        };
+        mediaRecorder.start(1000);
+      }catch(e){ log("Clip capture unavailable.","warn"); }
+    }catch(e){ log("Mic unavailable — use inject buttons.","warn"); }
+    try{
+      if(typeof DeviceMotionEvent!=="undefined" && typeof DeviceMotionEvent.requestPermission==="function"){
+        var r=await DeviceMotionEvent.requestPermission();
+        if(r!=="granted") log("Motion denied — use inject buttons.","warn");
+      }
+      window.addEventListener("devicemotion", onMotion);
+      log("Motion sensor listening.","ok");
+    }catch(e){ log("Motion unavailable.","warn"); }
+    if(navigator.geolocation){
+      navigator.geolocation.watchPosition(
+        function(p){ lastCoords={lat:p.coords.latitude,lon:p.coords.longitude}; },
+        function(e){ log("Location: "+e.message,"warn"); },
+        {enableHighAccuracy:true,maximumAge:5000,timeout:8000});
+    }
+    monitoring=true;
+    $("metersWrap").style.display="block"; $("btnStop").disabled=false;
+    log("Monitoring active.","ok");
+    tick();
+  };
+  window.stopMonitoring=function(){
+    monitoring=false;
+    if(rafId) cancelAnimationFrame(rafId);
+    window.removeEventListener("devicemotion", onMotion);
+    if(micStream) micStream.getTracks().forEach(function(t){t.stop();});
+    if(mediaRecorder && mediaRecorder.state!=="inactive") mediaRecorder.stop();
+    $("btnStart").disabled=false; $("btnStop").disabled=true;
+    log("Monitoring stopped.");
+  };
+  function onMotion(e){
+    var a=e.accelerationIncludingGravity||e.acceleration||{x:0,y:0,z:0};
+    var j=Math.abs((a.x||0)-lastAccel.x)+Math.abs((a.y||0)-lastAccel.y)+Math.abs((a.z||0)-lastAccel.z);
+    lastAccel={x:a.x||0,y:a.y||0,z:a.z||0};
+    motionLevel=motionLevel*0.7+Math.min(100,j*6)*0.3;
+  }
+  function readAudio(){
+    if(!analyser) return 0;
+    analyser.getByteTimeDomainData(dataArray);
+    var s=0;
+    for(var i=0;i<dataArray.length;i++){ var v=(dataArray[i]-128)/128; s+=v*v; }
+    return Math.min(100, Math.sqrt(s/dataArray.length)*260);
+  }
+  window.inject=function(kind){
+    if(!monitoring){ log("Start monitoring first.","warn"); return; }
+    var lvl = kind==="extreme"?100 : (kind==="animal"?90 : (kind==="road"?90:74));
+    pendingType = kind==="animal"?"animal" : (kind==="road"?"road" : (kind==="argument"?"ambiguous":"distress"));
+    simAudio=lvl; simMotion=lvl;
+    log("Injected "+kind+" event (~"+lvl+"%).","warn");
+  };
+
+  function tick(){
+    if(!monitoring) return;
+    audioLevel=audioLevel*0.68+Math.min(100, readAudio()+simAudio)*0.32;
+    var rawMotion=Math.min(100, motionLevel+simMotion);
+    var motionEff = mode==="ride" ? rawMotion*0.2 : rawMotion;
+    simAudio=Math.max(0,simAudio-0.5); simMotion=Math.max(0,simMotion-0.5);
+    motionLevel*=0.85;
+
+    $("audioBar").style.width=audioLevel.toFixed(0)+"%";
+    $("audioVal").textContent=audioLevel.toFixed(0)+"%";
+    $("motionBar").style.width=motionEff.toFixed(0)+"%";
+    $("motionVal").textContent=motionEff.toFixed(0)+"%";
+
+    var now=Date.now();
+    if(audioLevel>50){ if(!audioHigh) audioHigh=now; } else audioHigh=null;
+    if(motionEff>50){ if(!motionHigh) motionHigh=now; } else motionHigh=null;
+
+    var f;
+    if(audioHigh&&motionHigh&&Math.abs(audioHigh-motionHigh)<4000) f=Math.min(100,(audioLevel+motionEff)/2);
+    else f=Math.max(audioLevel,motionEff)*0.35;
+    fusionLevel=fusionLevel*0.6+f*0.4;
+    $("fusionBar").style.width=fusionLevel.toFixed(0)+"%";
+    $("fusionVal").textContent=fusionLevel.toFixed(0)+"%";
+
+    var eff=threshold();
+    if(!sentinelActive && now>cooldownUntil){
+      if(fusionLevel>EVENT_FLOOR){
+        if(evalStart===null){ evalStart=now; evalPeak=0; }
+        if(fusionLevel>evalPeak) evalPeak=fusionLevel;
+      }
+      if(evalStart!==null && now-evalStart>=EVAL_WINDOW){
+        var pk=evalPeak; evalStart=null; evalPeak=0;
+        if(pk>eff){ lastEventAt=now; openSentinel(pendingType,""); }
+        else { cooldownUntil=now+5000; registerSuppression(pk,eff); }
+      }
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+
+  function clearSignals(){
+    simAudio=0; simMotion=0; fusionLevel=0; audioHigh=null; motionHigh=null;
+    evalStart=null; evalPeak=0;
+  }
+
+  function registerSuppression(conf,eff){
+    clearSignals(); pruneSup(); suppressed.push(Date.now()); renderContext();
+    var n=suppressed.length;
+    log("SUPPRESSED — "+conf.toFixed(0)+"% below threshold "+eff+"%. ("+n+"/"+OVERRIDE_COUNT+")","ok");
+    if(n>=OVERRIDE_COUNT){
+      suppressed=[]; renderContext();
+      log("REPEAT-SUPPRESSION OVERRIDE — pattern detected.","orange");
+      showBanner("ovr-banner","Repeat-suppression override",
+        "Three high-distress events were suppressed inside the window, in a supposedly safe context with a trusted device present.<br><br><b>That is not an argument — that is a pattern.</b> Suppression is discarded and the sentinel check opens anyway.", false);
+      cooldownUntil=0;
+      setTimeout(function(){ openSentinel("distress","Repeat-suppression override"); },1400);
+      return;
+    }
+    showBanner("safe-banner","Suppressed by context engine",
+      "Confidence "+conf.toFixed(0)+"% did not clear the threshold of "+eff+"%.<br><br><b>Nothing was sent. No one was contacted. Your phone did not even buzz.</b>"+
+      "<br><br><span style='color:var(--orange)'>Suppressed in window: "+n+" / "+OVERRIDE_COUNT+"</span>", false);
+    setTimeout(function(){
+      if($("safeTitle").textContent==="Suppressed by context engine") $("safeCard").style.display="none";
+    },8000);
+  }
+
+  function showBanner(cls,title,html,showRecall){
+    $("safeCard").style.display="block";
+    $("safeCard").className="card "+cls;
+    $("safeTitle").textContent=title;
+    $("safeText").innerHTML=html;
+    $("recallBtn").style.display = showRecall ? "block":"none";
+  }
+
+  // ---------------- Layer 3 ----------------
+  function buildGrid(){
+    var g=$("tapGrid"); g.innerHTML="";
+    for(var i=0;i<9;i++){
+      var c=document.createElement("div");
+      c.className="cell"; c.dataset.i=String(i); c.innerHTML="<i></i>";
+      (function(cell){ cell.addEventListener("click",function(){ onTap(parseInt(cell.dataset.i,10),cell); }); })(c);
+      g.appendChild(c);
+    }
+  }
+  window.forceSentinel=function(){ if(!sentinelActive) openSentinel("distress",""); };
+
+  function openSentinel(type,reason){
+    sentinelActive=true; tapSeq=[]; sentType=type||"distress"; sentReason=reason||"";
+    clearSignals();
+    if(!$("safeCard").classList.contains("ovr-banner")) $("safeCard").style.display="none";
+    $("sentinelCard").style.display="block";
+    $("sentTitle").textContent = reason ? reason : "Are you okay?";
+    buildGrid(); applyHint();
+    sentLeft=sentinelWindow();
+    $("sentCount").textContent=String(sentLeft);
+    var v=vigilance()[0];
+    $("winNote").textContent = sentLeft+" s window — scaled to context ("+v+(mode==="ride"?", ride mode":"")+")";
+    log("SENTINEL CHECK opened, "+sentLeft+" s window. Nothing sent yet.","warn");
+    try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(e){}
+    if(sentTimer) clearInterval(sentTimer);
+    sentTimer=setInterval(function(){
+      sentLeft--;
+      $("sentCount").textContent=String(Math.max(sentLeft,0));
+      if(sentLeft<=0){
+        clearInterval(sentTimer);
+        lastUnansweredAt=Date.now();
+        closeSentinel();
+        var tier = (sentType==="crash"||mode==="abduction_watch") ? "full" : "soft";
+        log("No response across any channel → escalating ("+tier+").","bad");
+        escalate("timeout",sentType,tier);
+      }
+    },1000);
+  }
+  function closeSentinel(){
+    sentinelActive=false;
+    if(sentTimer) clearInterval(sentTimer);
+    $("sentinelCard").style.display="none";
+    clearSignals();
+    cooldownUntil=Date.now()+5000;
+  }
+  function sameSeq(a,b){ return a.length===b.length && a.every(function(v,i){return v===b[i];}); }
+
+  function resolveSafe(how){
+    closeSentinel();
+    lastUnansweredAt=null;
+    log("Proof of life via "+how+" — event discarded. Nothing sent.","ok");
+    showBanner("safe-banner","You're safe — event discarded",
+      "Answered by <b>"+how+"</b>. <b>Nothing was sent to anyone.</b> The total cost of this false positive was one vibration.", false);
+    setTimeout(function(){
+      if($("safeTitle").textContent==="You're safe — event discarded") $("safeCard").style.display="none";
+    },9000);
+  }
+
+  window.proofOfLife=function(ch){
+    if(!sentinelActive) return;
+    var names={unlock:"phone unlock (Face ID)",voice:"spoken safe word",shake:"shake pattern",volume:"volume sequence"};
+    resolveSafe(names[ch]||ch);
+  };
+
+  function onTap(i,el){
+    if(!sentinelActive) return;
+    el.classList.add("hit");
+    setTimeout(function(){ el.classList.remove("hit"); },220);
+    tapSeq.push(i);
+    if(tapSeq.length===3){
+      var seq=tapSeq.slice(); tapSeq=[];
+      if(sameSeq(seq,SAFE_PATTERN)) resolveSafe("tap pattern");
+      else if(sameSeq(seq,DURESS_PATTERN)){
+        closeSentinel();
+        log("DURESS pattern — screen shows cancelled, full alert sent silently.","bad");
+        showBanner("safe-banner","Cancelled",
+          "Alert cancelled. You're safe.<br><br><span style='color:var(--gold)'><b>[Demo note — invisible to the user and to an attacker]</b> This is the duress screen. A silent FULL alert has already reached the guardian. Open the Guardian tab.</span>", false);
+        escalate("duress",sentType,"full");
+      } else log("Wrong pattern — countdown continues.","warn");
+    }
+  }
+
+  window.toggleHint=function(){
+    hintOn=!hintOn;
+    $("hintBtn").textContent=hintOn?"Hide patterns":"Show patterns (demo aid)";
+    applyHint();
+  };
+  function applyHint(){
+    var cells=document.querySelectorAll("#tapGrid .cell");
+    cells.forEach(function(c){ c.classList.remove("hint"); });
+    if(hintOn){
+      SAFE_PATTERN.forEach(function(i){ if(cells[i]) cells[i].classList.add("hint"); });
+      $("hintLine").innerHTML="Safe = top-left → centre → bottom-right (highlighted).  Duress = top-right → centre → bottom-left.";
+    } else $("hintLine").textContent="Tap your three-point pattern.";
+  }
+
+  // ---------------- manual ----------------
+  window.manualTrigger=function(){
+    if(sentinelActive) closeSentinel();
+    log("MANUAL TRIGGER (volume sequence) — bypassing Layers 1–3.","plum");
+    escalate("manual","distress","full");
+  };
+
+  // ---------------- Layer 4 ----------------
+  function contextLine(kind,type){
+    if(mode==="ride" || (movement==="transit" && mode!=="abduction_watch"))
+      return "She appears to be travelling — "+speed+" km/h, motion consistent with riding. She may be unable to answer her phone.";
+    if(mode==="abduction_watch")
+      return "Vehicle movement began immediately after an unresolved distress event. Location is streaming live.";
+    if(type==="animal") return "Ambient audio suggests an animal encounter rather than a person.";
+    if(type==="road") return "Motion consistent with rough-road travel.";
+    if(type==="behaviour") return "No distress sounds detected. Flagged on route/ETA behaviour only.";
+    if(type==="crash") return "Deceleration spike followed by stillness — consistent with a fall or collision.";
+    return "Distress vocalisation with struggle motion.";
+  }
+  function hintFor(type){
+    if(type==="animal") return "Classifier hint: possible animal — barking detected";
+    if(type==="road") return "Classifier hint: road noise + rhythmic bumps";
+    if(type==="ambiguous") return "Classifier hint: raised voices, source unclear";
+    if(type==="behaviour") return "Classifier hint: no audio anomaly — behavioural flag";
+    if(type==="crash") return "Classifier hint: impact signature";
+    return "Classifier hint: distress vocalisation + struggle motion";
+  }
+
+  function escalate(kind,type,tier){
+    alertSeq++;
+    var id=alertSeq;
+    var coords=lastCoords||{lat:28.6889,lon:77.2094};
+    var url=null;
+    if(mediaRecorder && chunks.length){
+      try{ url=URL.createObjectURL(new Blob(chunks,{type:mediaRecorder.mimeType||"audio/webm"})); }catch(e){}
+    }
+    var a={ id:id, kind:kind, type:type||"distress", tier:tier||"soft", status:"pending",
+      time:new Date().toLocaleTimeString(), coords:coords, hasFix:!!lastCoords, audioUrl:url,
+      ctxLine:contextLine(kind,type), trail:[], streaming:(mode==="abduction_watch"),
+      promoteAt: (tier==="soft") ? Date.now()+PROMOTE_MS : null, dark:false };
+    alerts.unshift(a);
+    lastAlertId=id;
+    log("ESCALATED "+(tier==="soft"?"SOFT NOTICE":"FULL ALERT")+" ("+kind+"). Authorities NOT contacted.","bad");
+    $("gDot").classList.add("on");
+
+    if(tier==="soft"){
+      showBanner("safe-banner","Soft notice sent",
+        "Kavach could not confirm you're okay, so it sent your guardian a <b>low-priority notice</b> — not an emergency alarm.<br><br>It becomes a full alert in 20 s unless you resolve it.", true);
+      promoteTimers[id]=setTimeout(function(){ promote(id); }, PROMOTE_MS);
+    } else if(kind!=="duress"){
+      showBanner("safe-banner","Full alert sent",
+        "Your guardian has your location and audio. A human decides before authorities are contacted.", true);
+    }
+    if(mode==="abduction_watch") startTrail();
+    renderAlerts();
+  }
+
+  function promote(id){
+    var a=alerts.find(function(x){return x.id===id;});
+    if(!a || a.status!=="pending" || a.tier!=="soft") return;
+    a.tier="full"; a.promoteAt=null;
+    log("Soft notice #"+id+" unresolved → promoted to FULL ALERT.","bad");
+    renderAlerts();
+  }
+
+  window.recallAlert=function(){
+    var a=alerts.find(function(x){return x.id===lastAlertId;});
+    if(!a){ log("Nothing to recall.","warn"); return; }
+    if(promoteTimers[a.id]){ clearTimeout(promoteTimers[a.id]); delete promoteTimers[a.id]; }
+    a.status="recalled"; a.promoteAt=null;
+    stopTrail();
+    if(mode==="abduction_watch"){ mode="normal"; renderContext(); }
+    log("RECALLED alert #"+a.id+" — guardian notified she is fine.","ok");
+    showBanner("safe-banner","Recalled",
+      "Your guardian has been told immediately: <b>\"Ananya cancelled — she's fine.\"</b> They often see the correction before they react to the alert.", false);
+    renderAlerts();
+  };
+
+  function startTrail(){
+    if(trailTimer) return;
+    trailTimer=setInterval(function(){
+      var a=alerts.find(function(x){return x.streaming && x.status==="pending";});
+      if(!a){ return; }
+      var base=a.coords, n=a.trail.length;
+      a.trail.push({ lat: base.lat + n*0.0009 + (n%3)*0.0002, lon: base.lon + n*0.0013 - (n%2)*0.0003 });
+      if(a.trail.length>40) a.trail.shift();
+      renderAlerts();
+    }, TRAIL_INTERVAL);
+  }
+  function stopTrail(){ if(trailTimer){ clearInterval(trailTimer); trailTimer=null; } }
+
+  window.phoneWentDark=function(){
+    var a=alerts.find(function(x){return x.status==="pending";});
+    if(!a){ log("No active alert — phone going dark is not notable.","warn"); return; }
+    a.dark=true; a.tier="full";
+    stopTrail();
+    log("PHONE POWERED OFF during an active watch — guardians notified.","bad");
+    renderAlerts();
+  };
+
+  function trailSvg(trail){
+    if(trail.length<2) return "";
+    var lats=trail.map(function(p){return p.lat;}), lons=trail.map(function(p){return p.lon;});
+    var minLa=Math.min.apply(null,lats), maxLa=Math.max.apply(null,lats);
+    var minLo=Math.min.apply(null,lons), maxLo=Math.max.apply(null,lons);
+    var dLa=(maxLa-minLa)||1e-6, dLo=(maxLo-minLo)||1e-6;
+    var pts=trail.map(function(p){
+      var x=((p.lon-minLo)/dLo)*94+3;
+      var y=92-((p.lat-minLa)/dLa)*84;
+      return x.toFixed(1)+","+y.toFixed(1);
+    }).join(" ");
+    var last=pts.split(" ").pop().split(",");
+    return '<div class="trail"><div class="lbl">LIVE TRACK — '+trail.length+' points, updating every 3 s</div>'+
+      '<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+
+      '<polyline points="'+pts+'" fill="none" stroke="#d9534f" stroke-width="1.6" stroke-linejoin="round"/>'+
+      '<circle cx="'+last[0]+'" cy="'+last[1]+'" r="2.6" fill="#ff8b87"/></svg></div>';
+  }
+
+  function renderAlerts(){
+    var w=$("alertsWrap");
+    if(!alerts.length){
+      w.innerHTML='<div class="card"><div class="empty">No alerts. This is what a guardian\'s phone looks like when the ladder is doing its job.</div></div>';
+      return;
+    }
+    w.innerHTML=alerts.map(function(a){
+      var bbox=[a.coords.lon-0.006,a.coords.lat-0.004,a.coords.lon+0.006,a.coords.lat+0.004].join("%2C");
+      var pill = a.kind==="duress" ? '<span class="pill pill-duress">SILENT · DURESS</span>'
+               : a.kind==="manual" ? '<span class="pill pill-manual">MANUAL TRIGGER</span>'
+               : a.tier==="soft" ? '<span class="pill pill-soft">SOFT NOTICE</span>'
+               : '<span class="pill pill-full">FULL ALERT</span>';
+      var head = a.tier==="soft"
+        ? "Couldn't confirm Ananya is okay"
+        : (a.kind==="abduction" ? "Possible abduction — live tracking" : "Emergency alert");
+      var status;
+      if(a.status==="pending"){
+        status='<div class="btn-row" style="margin-top:10px">'+
+          '<button class="btn btn-danger" onclick="confirmAlert('+a.id+')">Confirm emergency</button>'+
+          '<button class="btn btn-outline" onclick="dismissAlert('+a.id+')">'+(a.tier==="soft"?"All fine":"False alarm")+'</button></div>';
+      } else if(a.status==="confirmed"){
+        status='<div class="kv" style="margin-top:10px;color:#ff8b87"><b>Confirmed by guardian → authorities contacted with location, audio and track.</b></div>';
+      } else if(a.status==="recalled"){
+        status='<div class="kv" style="margin-top:10px;color:var(--green)"><b>Recalled by Ananya — "I\'m fine." No authority contacted.</b></div>';
+      } else {
+        status='<div class="kv" style="margin-top:10px"><b>Dismissed by the guardian. No authority contacted.</b></div>';
+      }
+      var promote="";
+      if(a.status==="pending" && a.tier==="soft" && a.promoteAt){
+        promote='<div class="promote">Becomes a full alert if unresolved.</div>';
+      }
+      var dark = a.dark ? '<div class="kv" style="color:#ff8b87;margin-top:6px"><b>⚠ Her phone powered off during this watch.</b></div>' : '';
+      var audio = a.audioUrl
+        ? '<div class="kv" style="margin-top:8px">Auto-captured audio:</div><audio controls src="'+a.audioUrl+'"></audio>'
+        : '<div class="kv" style="margin-top:8px">Audio clip unavailable in this browser context.</div>';
+      var cls="alert-card"+(a.tier==="soft"?" soft":"")+(a.status==="confirmed"?" confirmed":"")+
+              (a.status==="dismissed"?" dismissed":"")+(a.status==="recalled"?" recalled":"");
+      return '<div class="'+cls+'">'+
+        '<div class="alert-head"><b>'+head+'</b>'+pill+'</div>'+
+        '<div class="kv">Alert #'+a.id+' · '+a.time+' · from <b>Ananya</b></div>'+
+        '<div class="kv">Location: <b>'+a.coords.lat.toFixed(5)+', '+a.coords.lon.toFixed(5)+'</b>'+(a.hasFix?'':' (fallback)')+'</div>'+
+        '<div class="ctx-chip">'+a.ctxLine+'</div>'+
+        '<div class="hint-chip">'+hintFor(a.type)+'</div>'+ dark +
+        (a.trail.length>1 ? trailSvg(a.trail) : '')+
+        '<iframe class="map" src="https://www.openstreetmap.org/export/embed.html?bbox='+bbox+'&marker='+a.coords.lat+'%2C'+a.coords.lon+'&layer=mapnik"></iframe>'+
+        audio + promote + status + '</div>';
+    }).join("");
+  }
+
+  window.confirmAlert=function(id){
+    var a=alerts.find(function(x){return x.id===id;});
+    if(a){ a.status="confirmed"; if(promoteTimers[id]){clearTimeout(promoteTimers[id]);delete promoteTimers[id];}
+      log("Guardian CONFIRMED #"+id+" → authorities contacted.","bad"); renderAlerts(); }
+  };
+  window.dismissAlert=function(id){
+    var a=alerts.find(function(x){return x.id===id;});
+    if(a){ a.status="dismissed"; if(promoteTimers[id]){clearTimeout(promoteTimers[id]);delete promoteTimers[id];}
+      stopTrail(); log("Guardian dismissed #"+id+".","ok"); renderAlerts(); }
+  };
+
+  // ---------------- scenarios ----------------
+  window.setScenario=function(w){
+    clearScen(); suppressed=[]; routeAnomaly=false; stopTrail();
+    mode="normal"; movement="stationary"; speed=0; transitEntry=null;
+    lastEventAt=null; lastUnansweredAt=null; walkingSeenAt=null;
+    var hint="";
+    if(w==="A"){
+      ctx={safeZone:true,night:false,familiar:true,devices:[{name:"Priya (sister)",suppress:true},{name:"Mom",suppress:true}]};
+      hint="Inject argument-level → suppressed. Then inject extreme → clears the cap and opens the sentinel.";
+    } else if(w==="B"){
+      ctx={safeZone:false,night:true,familiar:false,devices:[]};
+      hint="Inject extreme → sentinel opens with a short 15 s window. Try answering by unlocking instead of tapping.";
+    } else if(w==="C"){
+      ctx={safeZone:true,night:false,familiar:true,devices:[{name:"Priya (sister)",suppress:true}]};
+      hint="Inject argument-level three times → repeat-suppression override fires and opens the sentinel anyway.";
+    } else if(w==="D"){
+      ctx={safeZone:false,night:false,familiar:true,devices:[]};
+      hint="Press Walking, then Vehicle transit → clean entry → RIDE MODE. Now inject road bumps: motion is discounted and it stays quiet. Then try Simulate crash.";
+    } else if(w==="E"){
+      ctx={safeZone:false,night:true,familiar:false,devices:[]};
+      hint="Inject extreme (do NOT answer the sentinel), then press Vehicle transit → dirty entry → ABDUCTION WATCH with a live track.";
+    } else {
+      ctx={safeZone:false,night:true,familiar:false,devices:[]};
+      hint="No violence to detect. Press Start journey then wait, or press Off expected route — behaviour alone triggers a proof-of-life check.";
+    }
+    $("scen"+w).classList.add("active");
+    $("scenHint").textContent=hint;
+    log("Scenario "+w+" loaded.","ok");
+    renderContext();
+  };
+
+  buildGrid(); applyHint(); renderContext(); renderAlerts();
+  setInterval(function(){ if(!sentinelActive) renderContext(); },5000);
+})();
+</script>
+</body>
+</html>
