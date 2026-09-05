@@ -1,16 +1,16 @@
-# Kavach AI — Your Invisible Shield
+# Kavach AI - Your Invisible Shield
 
 A passive women's-safety system **designed on the assumption that its own detector will sometimes be wrong.**
 
-Built for **Code Build 1.0** by **Team ThunderHawks** — Hriddhi Srivastava, Siddhi Srivastava.
+Built for **Code Build 1.0** by **Team ThunderHawks** - Hriddhi Srivastava, Siddhi Srivastava.
 
 ---
 
 ## The problem
 
-Every mainstream safety app — panic buttons, the 112 India app, campus apps, wearable SOS — shares one design assumption: that the person in danger can reach their phone and press something.
+Every mainstream safety app - panic buttons, the 112 India app, campus apps, wearable SOS — shares one design assumption: that the person in danger can reach their phone and press something.
 
-In the moments these tools exist for — being grabbed, restrained, or frozen by fear — that is exactly the assumption that fails.
+In the moments these tools exist for - being grabbed, restrained, or frozen by fear — that is exactly the assumption that fails.
 
 > **The one action they all require is the one action you cannot take.**
 
@@ -18,7 +18,7 @@ In the moments these tools exist for — being grabbed, restrained, or frozen by
 
 The obvious fix is "use AI to detect a scream and send an SOS." That breaks too, and it is worth being honest about why:
 
-**No classifier — ours, Google's, anyone's — can reliably distinguish an angry scream at a sibling from a terrified scream at an attacker.** Audio and motion do not carry that information.
+**No classifier — ours, Google's, anyone's - can reliably distinguish an angry scream at a sibling from a terrified scream at an attacker.** Audio and motion do not carry that information.
 
 A system built on that premise fires during every argument. Guardians learn to ignore it. If it auto-dials police, it burns real emergency resources on noise. The tool destroys its own credibility.
 
