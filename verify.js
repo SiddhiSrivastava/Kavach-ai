@@ -8,7 +8,7 @@
  *   npx playwright install chromium
  *   node tests/verify.js
  *
- * Expected result: 43 passing checks, no console errors.
+ * Expected result: 51 passing checks, no console errors.
  */
 const { chromium } = require("playwright");
 const path = require("path");
@@ -36,8 +36,24 @@ const path = require("path");
 
   await page.goto("file://" + path.join(__dirname, "..", "kavach_ai_demo.html"));
   await page.waitForTimeout(400);
+
+  /* ---------- home screen (the product face) ---------- */
+  check("Home is the default view", await page.isVisible("#view-home"));
+  check("Home opens with protection off", /Protection is off/.test(await page.textContent("#homeStatus")));
+  check("Home names the guardians", (await page.evaluate(() =>
+    document.querySelectorAll("#homeGuardians .gcard").length)) === 3);
+  check("Home explains the vigilance level in plain words",
+    (await page.textContent("#homeWhy")).trim().length > 20);
+
+  await page.click('.tab[data-view="demo"]');
+  await page.waitForTimeout(200);
   await page.click("#btnStart");
   await page.waitForTimeout(1200);
+  await page.click('.tab[data-view="home"]'); await page.waitForTimeout(300);
+  check("Home reflects that protection is on", /You're protected/.test(await page.textContent("#homeStatus")));
+  check("Activity feed records protection being turned on",
+    /Protection turned on/.test(await page.textContent("#homeFeed")));
+  await page.click('.tab[data-view="demo"]'); await page.waitForTimeout(200);
 
   /* ---------- A: threshold cap ---------- */
   await page.click("#scenA"); await page.waitForTimeout(250);
@@ -136,7 +152,7 @@ const path = require("path");
 
   await page.waitForTimeout(7000);
   check("E: live location trail is streaming",
-    await page.evaluate(() => !!document.querySelector(".trail svg polyline")));
+    await page.evaluate(() => !!document.querySelector(".mapx svg polyline")));
   await page.click('.tab[data-view="guardian"]'); await page.waitForTimeout(600);
   check("E: guardian sees the abduction context", /streaming live/i.test(await bodyTxt()));
 
@@ -196,6 +212,12 @@ const path = require("path");
   await page.click('.alert-card button:has-text("Confirm emergency")');
   await page.waitForTimeout(400);
   check("Guardian confirmation reaches authorities", /authorities contacted/i.test(await bodyTxt()));
+
+  /* ---------- about tab ---------- */
+  await page.click('.tab[data-view="about"]'); await page.waitForTimeout(300);
+  check("About opens on the thesis section", await page.isVisible("#about-thesis") && !(await page.isVisible("#about-arch")));
+  await page.click("#segArch"); await page.waitForTimeout(250);
+  check("About switches to the architecture section", await page.isVisible("#about-arch") && !(await page.isVisible("#about-thesis")));
 
   /* ---------- report ---------- */
   console.log(R.join("\n"));

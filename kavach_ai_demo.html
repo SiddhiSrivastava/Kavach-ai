@@ -152,6 +152,43 @@
   .mapx-bar a:hover{text-decoration:underline}
   audio{width:100%;margin-top:8px}
 
+  /* ---------- home (product face) ---------- */
+  .shieldcard{background:linear-gradient(160deg,#16233c,#111a2c);border:1px solid var(--line);
+    border-radius:16px;padding:22px 16px 17px;margin-bottom:13px;text-align:center}
+  .shield{width:96px;height:96px;border-radius:50%;margin:0 auto 13px;display:flex;align-items:center;
+    justify-content:center;border:3px solid var(--grey);transition:.35s}
+  .shield.on{border-color:var(--teal);box-shadow:0 0 0 8px rgba(63,176,168,.09)}
+  .shield.alarm{border-color:var(--red);box-shadow:0 0 0 8px rgba(217,83,79,.12)}
+  .shield-in{width:70px;height:70px;border-radius:50%;background:var(--panel2);display:flex;
+    align-items:center;justify-content:center;font-size:30px}
+  .st-title{font-size:19px;font-weight:800;margin-bottom:4px}
+  .st-sub{font-size:12.4px;color:var(--muted);line-height:1.5;margin-bottom:14px;padding:0 6px}
+  .st-on{color:var(--teal)}.st-off{color:var(--muted)}.st-alarm{color:#ff8b87}
+  .sos{width:100%;border:none;border-radius:14px;padding:15px;margin-bottom:13px;cursor:pointer;
+    background:linear-gradient(135deg,#c94a46,#a8352f);color:#fff;font-family:inherit;text-align:left}
+  .sos b{display:block;font-size:16px;font-weight:800;letter-spacing:.3px}
+  .sos span{display:block;font-size:11.4px;opacity:.85;margin-top:3px;line-height:1.4}
+  .hrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;
+    border-bottom:1px solid #1c2740;font-size:12.6px;color:var(--muted)}
+  .hrow:last-of-type{border-bottom:none}
+  .hrow b{color:var(--text);font-weight:600;text-align:right}
+  .gcard{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);
+    border-radius:10px;padding:10px 12px;margin-bottom:7px}
+  .gcard .nm{font-size:13px;font-weight:600}
+  .gcard .rl{font-size:10.8px;color:var(--muted);margin-top:2px}
+  .feed div{font-size:12.2px;color:var(--muted);padding:8px 0;border-bottom:1px solid #1c2740;line-height:1.45}
+  .feed div:last-child{border-bottom:none}
+  .feed .t{color:var(--grey);font-size:10.6px;display:block;margin-bottom:2px}
+  .feed .ok{color:var(--green)}.feed .warn{color:var(--gold)}.feed .bad{color:#ff8b87}
+  .seg{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    padding:4px;margin-bottom:13px}
+  .segb{flex:1;padding:9px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);
+    font-size:12.3px;font-family:inherit;cursor:pointer}
+  .segb.active{background:var(--panel2);color:var(--text);font-weight:600}
+  .demoflag{display:flex;gap:9px;align-items:flex-start;background:rgba(224,122,69,.09);
+    border:1px solid rgba(224,122,69,.32);border-radius:11px;padding:10px 12px;margin-bottom:13px;
+    font-size:11.8px;color:var(--muted);line-height:1.5}
+  .demoflag b{color:var(--orange)}
   .note{font-size:11.8px;color:var(--muted);line-height:1.55}
   .note b{color:var(--text)}
   .arch-box{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:7px;font-size:12.4px;line-height:1.45}
@@ -174,14 +211,65 @@
   </header>
 
   <div class="tabs">
-    <div class="tab active" data-view="demo">Device</div>
+    <div class="tab active" data-view="home">Home</div>
+    <div class="tab" data-view="demo">Sensors</div>
     <div class="tab" data-view="guardian">Guardian<span class="dot" id="gDot"></span></div>
-    <div class="tab" data-view="how">Thesis</div>
-    <div class="tab" data-view="arch">Architecture</div>
+    <div class="tab" data-view="about">About</div>
   </div>
 
-  <!-- ================= DEVICE ================= -->
-  <div class="view active" id="view-demo">
+  <!-- ================= HOME (the actual app) ================= -->
+  <div class="view active" id="view-home">
+
+    <div class="shieldcard">
+      <div class="shield" id="shieldRing"><div class="shield-in" id="shieldIcon">&#128737;</div></div>
+      <div class="st-title st-off" id="homeStatus">Protection is off</div>
+      <div class="st-sub" id="homeSub">Kavach listens in the background and never sends anything without asking you first.</div>
+      <button class="btn btn-primary" id="homeToggle" onclick="homeToggle()">Turn on protection</button>
+    </div>
+
+    <button class="sos" onclick="manualTrigger()">
+      <b>Emergency &mdash; send now</b>
+      <span>Or press volume-down three times. Works with the phone still in your pocket, and skips every check.</span>
+    </button>
+
+    <div class="card">
+      <h2>Right now</h2>
+      <div class="hrow"><span>Where you are</span><b id="homePlace">Unfamiliar area</b></div>
+      <div class="hrow"><span>Time of day</span><b id="homeTime">Daytime</b></div>
+      <div class="hrow"><span>Movement</span><b id="homeMove">Still</b></div>
+      <div class="hrow"><span>People you trust nearby</span><b id="homeNear">None detected</b></div>
+      <div class="hrow"><span>How closely Kavach is watching</span><b id="homeVigil">Normally</b></div>
+      <p class="note" style="margin-top:9px" id="homeWhy"></p>
+    </div>
+
+    <div class="card">
+      <h2>Journey watch</h2>
+      <div class="hrow"><span id="homeJourney">No journey set</span><b id="homeJourneyEta"></b></div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-outline" onclick="startJourney()">I'm heading home</button>
+        <button class="btn btn-outline" onclick="arriveJourney()">I've arrived</button>
+      </div>
+      <p class="note" style="margin-top:8px">If you don't arrive, Kavach asks you to confirm you're okay <b>before</b> it tells anyone.</p>
+    </div>
+
+    <div class="card">
+      <h2>Your guardians <small>&mdash; who would be contacted</small></h2>
+      <div id="homeGuardians"></div>
+      <p class="note" style="margin-top:8px">A guardian sees your location, ten seconds of audio and the reason &mdash; and a human confirms before any authority is contacted.</p>
+    </div>
+
+    <div class="card">
+      <h2>Recent activity</h2>
+      <div class="feed" id="homeFeed"><div>Nothing yet.</div></div>
+    </div>
+
+    <div class="demoflag"><span>&#9888;</span><div><b>This is a demo build.</b> The <b>Sensors</b> tab exposes the live meters and the scenario controls, so the system can be triggered on stage without anyone being attacked. A shipped build hides all of it.</div></div>
+  </div>
+
+  <!-- ================= SENSORS (demo harness) ================= -->
+  <div class="view" id="view-demo">
+
+    <div class="demoflag"><span>&#9888;</span><div><b>Demo controls.</b> Everything below simulates what real sensors would report. The meters, the microphone and the state machine are live &mdash; only the triggers are pushed by hand.</div></div>
 
     <div class="card">
       <h2>Demo scenarios</h2>
@@ -310,8 +398,14 @@
     <div id="alertsWrap"></div>
   </div>
 
-  <!-- ================= THESIS ================= -->
-  <div class="view" id="view-how">
+  <!-- ================= ABOUT ================= -->
+  <div class="view" id="view-about">
+    <div class="seg">
+      <button class="segb active" id="segThesis" onclick="aboutSec('thesis')">Why it works this way</button>
+      <button class="segb" id="segArch" onclick="aboutSec('arch')">Architecture</button>
+    </div>
+    <div id="about-thesis">
+
     <div class="card">
       <h2>The honest problem with "AI detects distress"</h2>
       <p class="note">No classifier can reliably tell an angry scream at your sibling from a terrified scream at an attacker. Audio and motion do not carry that information.</p>
@@ -348,19 +442,9 @@
       <p class="note">Likewise, if the attacker destroys the phone, no software fixes that — a continuous trail up to that moment is the honest best. That is the real argument for a companion wearable, and a roadmap item rather than a hidden gap.</p>
     </div>
 
-    <div class="card">
-      <h2>Running this on stage</h2>
-      <p class="note"><b>Microphone, motion and vibration only work on a secure origin</b> — that means <code>https://</code> or <code>localhost</code>. Opening this over your laptop's LAN address (<code>http://192.168.x.x:8000</code>) will silently block the mic and motion sensors. Do not rely on it.</p>
-      <p class="note" style="margin-top:8px"><b>Best — real phone, full sensors:</b> go to <code>app.netlify.com/drop</code>, drag this single file in, and you get an HTTPS link in about thirty seconds. Open that on your phone. No account or build step needed.</p>
-      <p class="note" style="margin-top:8px"><b>Alternative:</b> <code>cloudflared tunnel --url http://localhost:8000</code> wraps a local server in a public HTTPS URL, so you can keep editing the file live.</p>
-      <p class="note" style="margin-top:8px"><b>Fallback if the venue Wi-Fi fails:</b> run <code>python3 -m http.server 8000</code> and open <code>http://localhost:8000</code> <b>on the laptop itself</b> — localhost counts as secure, so the mic works. Laptops have no accelerometer, so drive motion with the inject buttons. This also projects better.</p>
-      <p class="note" style="margin-top:8px"><b>Use an Android phone if you can.</b> iOS Safari does not support the vibration API, so the silent buzz will not fire there — the on-screen countdown still does everything else.</p>
-      <p class="note" style="margin-top:8px"><b>The Guardian tab is part of this same app</b> — there is no backend, so two phones will not sync. Demo it by switching tabs on one device, ideally mirrored to the projector.</p>
     </div>
-  </div>
+    <div id="about-arch" style="display:none">
 
-  <!-- ================= ARCHITECTURE ================= -->
-  <div class="view" id="view-arch">
     <div class="card">
       <h2>The ladder</h2>
       <div class="arch-box">Sensors: <b>mic</b> · <b>accelerometer</b> · <b>GPS speed &amp; geofence</b> · <b>BLE proximity</b> · <b>activity recognition</b></div>
@@ -383,7 +467,15 @@
       <h2>Real vs. mocked</h2>
       <p class="note"><b>Real:</b> microphone amplitude sensing, device-motion sensing, GPS, the entire state machine — context scoring and cap, repeat-override, transit entry classification, ride mode motion discounting, abduction watch, crash path, all five proof-of-life channels, context-scaled windows, soft→full promotion, recall, journey watch, route anomaly, live trail accumulation, audio capture, and the guardian confirm/dismiss flow.</p>
       <p class="note" style="margin-top:8px"><b>Simulated by buttons:</b> BLE proximity, GPS speed and activity recognition (production uses Android ActivityRecognition / iOS CMMotionActivity), the audio event classifier's label, the guardian roster, and phone power-off. Timings are shortened for stage: override window 3 min (spec 20), journey ETA 20 s, soft→full promotion 20 s (spec 60). Say this to judges — it reads as engineering honesty.</p>
-    </div>
+        <div class="card">
+      <h2>Running this on stage</h2>
+      <p class="note"><b>Microphone, motion and vibration only work on a secure origin</b> — that means <code>https://</code> or <code>localhost</code>. Opening this over your laptop's LAN address (<code>http://192.168.x.x:8000</code>) will silently block the mic and motion sensors. Do not rely on it.</p>
+      <p class="note" style="margin-top:8px"><b>Best — real phone, full sensors:</b> go to <code>app.netlify.com/drop</code>, drag this single file in, and you get an HTTPS link in about thirty seconds. Open that on your phone. No account or build step needed.</p>
+      <p class="note" style="margin-top:8px"><b>Alternative:</b> <code>cloudflared tunnel --url http://localhost:8000</code> wraps a local server in a public HTTPS URL, so you can keep editing the file live.</p>
+      <p class="note" style="margin-top:8px"><b>Fallback if the venue Wi-Fi fails:</b> run <code>python3 -m http.server 8000</code> and open <code>http://localhost:8000</code> <b>on the laptop itself</b> — localhost counts as secure, so the mic works. Laptops have no accelerometer, so drive motion with the inject buttons. This also projects better.</p>
+      <p class="note" style="margin-top:8px"><b>Use an Android phone if you can.</b> iOS Safari does not support the vibration API, so the silent buzz will not fire there — the on-screen countdown still does everything else.</p>
+      <p class="note" style="margin-top:8px"><b>The Guardian tab is part of this same app</b> — there is no backend, so two phones will not sync. Demo it by switching tabs on one device, ideally mirrored to the projector.</p>
+        </div>
   </div>
 </div>
 
@@ -392,15 +484,98 @@
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
 
-  document.querySelectorAll(".tab").forEach(function(tab){
-    tab.addEventListener("click", function(){
-      document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
-      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
-      tab.classList.add("active");
-      $("view-"+tab.dataset.view).classList.add("active");
-      if(tab.dataset.view==="guardian") $("gDot").classList.remove("on");
+  function showView(name){
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.classList.toggle("active", t.dataset.view===name);
     });
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    var el=$("view-"+name); if(el) el.classList.add("active");
+    if(name==="guardian") $("gDot").classList.remove("on");
+  }
+  document.querySelectorAll(".tab").forEach(function(tab){
+    tab.addEventListener("click", function(){ showView(tab.dataset.view); });
   });
+  window.aboutSec=function(which){
+    $("about-thesis").style.display = which==="thesis" ? "block":"none";
+    $("about-arch").style.display   = which==="arch"   ? "block":"none";
+    $("segThesis").classList.toggle("active", which==="thesis");
+    $("segArch").classList.toggle("active", which==="arch");
+  };
+
+  /* ---------------- Home: the product face ---------------- */
+  var feedItems=[];
+  function activity(text, tone){
+    feedItems.unshift({t:new Date().toLocaleTimeString(), m:text, c:tone||""});
+    if(feedItems.length>12) feedItems.pop();
+    renderFeed();
+  }
+  function renderFeed(){
+    var f=$("homeFeed"); if(!f) return;
+    if(!feedItems.length){ f.innerHTML="<div>Nothing yet.</div>"; return; }
+    f.innerHTML=feedItems.map(function(x){
+      return '<div class="'+x.c+'"><span class="t">'+x.t+'</span>'+x.m+'</div>';
+    }).join("");
+  }
+  var VIGIL_WORDS={
+    "HIGH BAR":["Sceptically","You're somewhere safe with people you trust nearby, so Kavach demands much stronger evidence before it reacts \u2014 but it can never switch itself off entirely."],
+    "LOW":["Lightly","Familiar surroundings. Kavach stays out of your way."],
+    "NORMAL":["Normally","Nothing about where you are suggests extra caution."],
+    "HEIGHTENED":["Closely","Something about the place, the hour or your route says be careful."],
+    "PRE-ARMED":["Very closely","You're alone somewhere unfamiliar. Kavach reacts on far less, and gives you a shorter window to answer."],
+    "ABDUCTION WATCH":["Emergency","Your location is streaming to your guardians right now."]
+  };
+  function renderHome(){
+    if(!$("homeStatus")) return;
+    var alarm = (mode==="abduction_watch");
+    $("shieldRing").className = "shield"+(alarm?" alarm":(monitoring?" on":""));
+    $("shieldIcon").innerHTML = alarm ? "&#9888;" : "&#128737;";
+    $("homeStatus").textContent = alarm ? "Emergency \u2014 tracking you"
+                                : monitoring ? "You're protected" : "Protection is off";
+    $("homeStatus").className = "st-title "+(alarm?"st-alarm":(monitoring?"st-on":"st-off"));
+    $("homeSub").textContent = alarm
+      ? "Your guardians have been told and your location is being sent continuously."
+      : monitoring
+        ? "Kavach is listening in the background. It will ask you before it tells anyone anything."
+        : "Kavach listens in the background and never sends anything without asking you first.";
+    $("homeToggle").textContent = monitoring ? "Turn off protection" : "Turn on protection";
+    $("homeToggle").className = "btn "+(monitoring?"btn-outline":"btn-primary");
+
+    $("homePlace").textContent = ctx.safeZone ? "Somewhere you marked safe"
+                               : ctx.familiar ? "A route you take often" : "Unfamiliar area";
+    $("homeTime").textContent = ctx.night ? "Night" : "Daytime";
+    $("homeMove").textContent = mode==="ride" ? "Riding \u2014 bumps ignored, crashes still detected"
+                              : mode==="abduction_watch" ? "In a vehicle \u2014 not by choice"
+                              : movement==="transit" ? "In a vehicle"
+                              : movement==="walking" ? "Walking" : "Still";
+    var sup=ctx.devices.filter(function(d){return d.suppress;}).length;
+    $("homeNear").textContent = !ctx.devices.length ? "None detected"
+      : ctx.devices.length+" nearby"+(sup?" \u00b7 "+sup+" trusted to calm false alarms":"");
+
+    var v=vigilance()[0], w=VIGIL_WORDS[v]||["Normally",""];
+    $("homeVigil").textContent=w[0];
+    $("homeWhy").textContent=w[1];
+
+    var g="";
+    ["Priya","Mom","Roommate"].forEach(function(nm,i){
+      var near=ctx.devices.some(function(d){return d.name.indexOf(nm)===0;});
+      var supp=ctx.devices.some(function(d){return d.name.indexOf(nm)===0 && d.suppress;});
+      g+='<div class="gcard"><div><div class="nm">'+nm+'</div><div class="rl">'+
+         (supp?"Guardian \u00b7 also calms false alarms when nearby":"Guardian")+
+         '</div></div><span class="chip '+(near?"chip-sup":"chip-gua")+'">'+(near?"NEARBY":"CONTACT")+'</span></div>';
+    });
+    $("homeGuardians").innerHTML=g;
+
+    if(journey){
+      var left=Math.max(0,Math.round((journey.eta-Date.now())/1000));
+      $("homeJourney").textContent="Heading home";
+      $("homeJourneyEta").textContent = left ? "expected in "+left+" s" : "overdue";
+    } else {
+      $("homeJourney").textContent="No journey set";
+      $("homeJourneyEta").textContent="";
+    }
+  }
+  window.homeToggle=function(){ if(monitoring) stopMonitoring(); else startMonitoring(); };
+  setInterval(renderHome, 1000);
 
   // ---------------- config ----------------
   var CAP=85, FLOOR=30, OVERRIDE_COUNT=3, OVERRIDE_WINDOW=180000;
@@ -511,6 +686,7 @@
     $("speedVal").textContent=speed+" km/h";
     $("btnCrash").style.display = mode==="ride" ? "block":"none";
     $("motionDisc").textContent = mode==="ride" ? "(discounted ×0.2)" : "";
+    renderHome();
   }
 
   window.toggle=function(k){ ctx[k]=!ctx[k]; clearScen(); renderContext(); };
@@ -633,6 +809,8 @@
     monitoring=true;
     $("metersWrap").style.display="block"; $("btnStop").disabled=false;
     log("Monitoring active.","ok");
+    activity("Protection turned on. Microphone, motion and location are live.","ok");
+    renderHome();
     tick();
   };
   window.stopMonitoring=function(){
@@ -643,6 +821,8 @@
     if(mediaRecorder && mediaRecorder.state!=="inactive") mediaRecorder.stop();
     $("btnStart").disabled=false; $("btnStop").disabled=true;
     log("Monitoring stopped.");
+    activity("Protection turned off.");
+    renderHome();
   };
   function onMotion(e){
     var a=e.accelerationIncludingGravity||e.acceleration||{x:0,y:0,z:0};
@@ -716,6 +896,7 @@
     if(n>=OVERRIDE_COUNT){
       suppressed=[]; renderContext();
       log("REPEAT-SUPPRESSION OVERRIDE — pattern detected.","orange");
+      activity("Third distress event in the same window. Kavach stopped trusting the quiet context.","warn");
       showBanner("ovr-banner","Repeat-suppression override",
         "Three high-distress events were suppressed inside the window, in a supposedly safe context with a trusted device present.<br><br><b>That is not an argument — that is a pattern.</b> Suppression is discarded and the sentinel check opens anyway.", false);
       cooldownUntil=0;
@@ -755,6 +936,8 @@
     clearSignals();
     if(!$("safeCard").classList.contains("ovr-banner")) $("safeCard").style.display="none";
     $("sentinelCard").style.display="block";
+    showView("demo");
+    activity("Kavach asked you to confirm you\u2019re okay. Nothing sent yet.","warn");
     $("sentTitle").textContent = reason ? reason : "Are you okay?";
     buildGrid(); applyHint();
     sentLeft=sentinelWindow();
@@ -790,6 +973,7 @@
     closeSentinel();
     lastUnansweredAt=null;
     log("Proof of life via "+how+" — event discarded. Nothing sent.","ok");
+    activity("You answered by "+how+". The event was discarded \u2014 nothing was sent.","ok");
     showBanner("safe-banner","You're safe — event discarded",
       "Answered by <b>"+how+"</b>. <b>Nothing was sent to anyone.</b> The total cost of this false positive was one vibration.", false);
     setTimeout(function(){
@@ -878,6 +1062,7 @@
     alerts.unshift(a);
     lastAlertId=id;
     log("ESCALATED "+(tier==="soft"?"SOFT NOTICE":"FULL ALERT")+" ("+kind+"). Authorities NOT contacted.","bad");
+    activity(tier==="soft" ? "Kavach could not confirm you\u2019re okay \u2014 your guardian got a low-priority notice." : "Full alert sent to your guardian. No authority contacted yet.","bad");
     $("gDot").classList.add("on");
 
     if(tier==="soft"){
@@ -897,6 +1082,7 @@
     if(!a || a.status!=="pending" || a.tier!=="soft") return;
     a.tier="full"; a.promoteAt=null;
     log("Soft notice #"+id+" unresolved → promoted to FULL ALERT.","bad");
+    activity("The notice went unresolved, so it became a full alert.","bad");
     renderAlerts();
   }
 
@@ -956,6 +1142,27 @@
   function mapPanel(a){
     var la=a.coords.lat, lo=a.coords.lon;
     var url="https://www.openstreetmap.org/?mlat="+la+"&mlon="+lo+"#map=17/"+la+"/"+lo;
+    var t=a.trail||[], route="", px=160, py=58;
+    if(t.length>1){
+      var lats=t.map(function(p){return p.lat;}), lons=t.map(function(p){return p.lon;});
+      var minLa=Math.min.apply(null,lats), maxLa=Math.max.apply(null,lats);
+      var minLo=Math.min.apply(null,lons), maxLo=Math.max.apply(null,lons);
+      var dLa=(maxLa-minLa)||1e-6, dLo=(maxLo-minLo)||1e-6;
+      var pts=t.map(function(p){
+        return [ ((p.lon-minLo)/dLo)*212+54, 96-((p.lat-minLa)/dLa)*72 ];
+      });
+      var d=pts.map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1);}).join(" ");
+      route='<polyline points="'+d+'" fill="none" stroke="#ff5f59" stroke-width="3.4" '+
+            'stroke-linejoin="round" stroke-linecap="round"/>'+
+            '<circle cx="'+pts[0][0].toFixed(1)+'" cy="'+pts[0][1].toFixed(1)+'" r="4.4" '+
+            'fill="#0e1626" stroke="#ff8b87" stroke-width="2.2"/>'+
+            '<text x="'+(pts[0][0]+9).toFixed(1)+'" y="'+(pts[0][1]+4).toFixed(1)+'" '+
+            'font-size="9.5" fill="#8f9bb3" font-family="system-ui,sans-serif">taken from here</text>';
+      px=pts[pts.length-1][0]; py=pts[pts.length-1][1];
+    }
+    var label = t.length>1
+      ? 'LIVE TRACK &middot; '+t.length+' points &middot; updating every 3 s'
+      : 'Last fix &middot; '+la.toFixed(5)+', '+lo.toFixed(5);
     return '<div class="mapx">'+
       '<svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMid slice">'+
         '<rect width="320" height="120" fill="#0e1626"/>'+
@@ -968,11 +1175,12 @@
         '<rect x="128" y="10" width="52" height="30" rx="2"/>'+
         '<rect x="228" y="76" width="64" height="32" rx="2"/>'+
         '<rect x="22" y="76" width="54" height="30" rx="2"/></g>'+
-        '<circle cx="160" cy="58" r="26" fill="#d9534f" opacity=".13"/>'+
-        '<circle cx="160" cy="58" r="13" fill="#d9534f" opacity=".28"/>'+
-        '<circle cx="160" cy="58" r="5" fill="#ff8b87"/>'+
+        route +
+        '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="13" fill="#d9534f" opacity=".16"/>'+
+        '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="6.6" fill="#d9534f" opacity=".34"/>'+
+        '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="3.2" fill="#ff8b87"/>'+
       '</svg>'+
-      '<div class="mapx-bar"><span>Last fix &middot; '+la.toFixed(5)+', '+lo.toFixed(5)+'</span>'+
+      '<div class="mapx-bar"><span>'+label+'</span>'+
       '<a href="'+url+'" target="_blank" rel="noopener">Open in maps &rarr;</a></div></div>';
   }
 
@@ -1018,7 +1226,6 @@
         '<div class="kv">Location: <b>'+a.coords.lat.toFixed(5)+', '+a.coords.lon.toFixed(5)+'</b>'+(a.hasFix?'':' (fallback)')+'</div>'+
         '<div class="ctx-chip">'+a.ctxLine+'</div>'+
         '<div class="hint-chip">'+hintFor(a.type)+'</div>'+ dark +
-        (a.trail.length>1 ? trailSvg(a.trail) : '')+
         mapPanel(a)+
         audio + promote + status + '</div>';
     }).join("");
