@@ -1,16 +1,16 @@
-# Kavach AI - Your Invisible Shield
+# Kavach AI — Your Invisible Shield
 
 A passive women's-safety system **designed on the assumption that its own detector will sometimes be wrong.**
 
-Built for **Code Build 1.0** by **Team ThunderHawks** - Hriddhi Srivastava and Siddhi Srivastava.
+Built for **Code Build 1.0** by **Team ThunderHawks** — Hriddhi Srivastava, Siddhi Srivastava.
 
 ---
 
 ## The problem
 
-Every mainstream safety app - panic buttons, the 112 India app, campus apps, wearable SOS - shares one design assumption: that the person in danger can reach their phone and press something.
+Every mainstream safety app — panic buttons, the 112 India app, campus apps, wearable SOS — shares one design assumption: that the person in danger can reach their phone and press something.
 
-In the moments these tools exist for - being grabbed, restrained, or frozen by fear - that is exactly the assumption that fails.
+In the moments these tools exist for — being grabbed, restrained, or frozen by fear — that is exactly the assumption that fails.
 
 > **The one action they all require is the one action you cannot take.**
 
@@ -18,7 +18,7 @@ In the moments these tools exist for - being grabbed, restrained, or frozen by f
 
 The obvious fix is "use AI to detect a scream and send an SOS." That breaks too, and it is worth being honest about why:
 
-**No classifier - ours, Google's, anyone's - can reliably distinguish an angry scream at a sibling from a terrified scream at an attacker.** Audio and motion do not carry that information.
+**No classifier — ours, Google's, anyone's — can reliably distinguish an angry scream at a sibling from a terrified scream at an attacker.** Audio and motion do not carry that information.
 
 A system built on that premise fires during every argument. Guardians learn to ignore it. If it auto-dials police, it burns real emergency resources on noise. The tool destroys its own credibility.
 
@@ -41,7 +41,7 @@ python -m http.server 8000
 Then open **`http://localhost:8000/kavach_ai_demo.html`**.
 
 > **Why not just double-click the file?**
-> Browsers only grant microphone, motion and vibration access on a *secure origin* - `https://` or `localhost`. Opening the file directly (`file://`) renders the page but leaves every sensor dead.
+> Browsers only grant microphone, motion and vibration access on a *secure origin* — `https://` or `localhost`. Opening the file directly (`file://`) renders the page but leaves every sensor dead.
 
 **To run it on a phone** with real motion sensors, use `kavach_server.py`, which generates its own certificate and serves over HTTPS on your local network:
 
@@ -56,25 +56,32 @@ It prints an address for the laptop and one for the phone.
 
 ## What it looks like
 
-**Context suppression — an argument at home produces nothing.**
-The threshold is raised to 85, the injected event peaks at 69%, and the system stays completely silent.
+**An argument at home produces nothing.** The threshold is raised to 85, the injected event peaks at 70%, and the system stays completely silent.
 
-![Context suppression](docs/screenshots/1-context-suppression.png)
+<img src="screenshot-1-context-suppression.png" width="560" alt="Context suppression">
 
-**Sentinel Check — the phone asks you first, five ways to answer.**
-Nothing has been sent to anyone at this point. The window length is set by context.
+**The context engine.** Trusted devices can be switched between *suppresses* and *guardian only*. The suppressed-event counter drives the repeat-suppression override.
 
-![Sentinel check](docs/screenshots/2-sentinel-check.png)
+<img src="screenshot-4-context-engine.png" width="560" alt="Context engine">
 
-**Abduction watch — the guardian's view, with a live location trail.**
-Vehicle movement began right after an unresolved distress event, so the system streams a track rather than sending a single pin.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-![Guardian abduction watch](docs/screenshots/3-guardian-abduction-watch.png)
+**Sentinel Check** — the phone asks you first, five ways to answer. Nothing has been sent to anyone yet.
 
-**The context engine.**
-Trusted devices can be switched between *suppresses* and *guardian only*. The suppressed-event counter drives the repeat-suppression override.
+<img src="screenshot-2-sentinel-check.png" width="330" alt="Sentinel check">
 
-![Context engine](docs/screenshots/4-context-engine.png)
+</td>
+<td width="50%" valign="top">
+
+**Guardian view** — abduction watch with a live location trail, not a single stale pin.
+
+<img src="screenshot-3-guardian-abduction-watch.png" width="330" alt="Guardian abduction watch">
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -193,7 +200,7 @@ We would rather state this plainly than have it discovered.
 ```bash
 npm install playwright
 npx playwright install chromium
-node tests/verify.js
+node verify.js
 ```
 
 An automated Playwright suite runs **43 end-to-end checks** across all six scenarios, covering the threshold cap, the repeat-suppression override, transit entry classification in both directions, crash detection, every proof-of-life channel, the duress path, soft-to-full promotion, recall, journey watch, route anomaly, live trail accumulation, and guardian confirmation.
@@ -227,8 +234,10 @@ kavach_ai_demo.html      the app — single self-contained file
 kavach_server.py         HTTPS server for phone testing (generates its own certificate)
 1_RUN_ON_LAPTOP.bat      one-click launcher (Windows)
 2_RUN_FOR_PHONE.bat      one-click phone launcher (Windows)
-tests/verify.js          43-check end-to-end suite (Playwright)
-docs/                    concept document, architecture diagram, deck, screenshots
+verify.js                43-check end-to-end suite (Playwright)
+concept-document.docx    full concept and implementation plan
+presentation.pdf         5-slide deck
+architecture-diagram.png the four-layer ladder
 ```
 
 ---
